@@ -12,7 +12,7 @@
 #
 # 跑完后，抓到的值以 KEY=VALUE 形式打印出来，供 agent 解析。
 #
-# `capture` 会把它的值打印回终端，agent 在那里读它——所以
+# `capture` 会把它的值打印回终端，agent 在那里读它，所以
 # 用 capture 抓观察值，把登录这类事留给用户、写成 `step`。
 
 set -euo pipefail

@@ -1,8 +1,8 @@
 # 写 Agent Brief
 
-agent brief 是 GitHub issue 或 PR 进入 `ready-for-agent` 时发布的一条结构化评论。它是 AFK agent 工作的权威规格。原始正文和讨论只是上下文——agent brief 才是契约。
+agent brief 是 GitHub issue 或 PR 进入 `ready-for-agent` 时发布的一条结构化评论。它是 AFK agent 工作的权威规格。原始正文和讨论只是上下文，agent brief 才是契约。
 
-brief 说清 **agent 应该做什么**，这一点延伸到两个入口：对 issue，是从零构建这个改动；对 PR，是_对现有 diff_ 还要做什么——收尾、补缺口、回应评审意见。两边原则相同；下面的 PR 例子展示了差别。
+brief 说清 **agent 应该做什么**，这一点延伸到两个入口：对 issue，是从零构建这个改动；对 PR，是_对现有 diff_ 还要做什么：收尾、补缺口、回应评审意见。两边原则相同；下面的 PR 例子展示了差别。
 
 ## 原则
 
@@ -12,7 +12,7 @@ issue 可能在 `ready-for-agent` 待上几天甚至几周。这期间代码库�
 
 - **要**描述接口、类型、行为契约
 - **要**点名 agent 应查找或修改的具体类型、函数签名、配置形状
-- **不要**引用文件路径——会过时
+- **不要**引用文件路径：会过时
 - **不要**引用行号
 - **不要**假设当前实现结构会保持不变
 
@@ -51,9 +51,9 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 描述 agent 工作完成后应发生的行为。说清边界情况和错误条件。
 
 **Key interfaces:**
-- `TypeName` — 要改什么、为什么
-- `functionName()` 返回类型 — 现在返回什么、应该返回什么
-- 配置形状 — 需要的新配置项
+- `TypeName`：要改什么、为什么
+- `functionName()` 返回类型：现在返回什么、应该返回什么
+- 配置形状：需要的新配置项
 
 **Acceptance criteria:**
 - [ ] 具体、可测的标准 1
@@ -83,7 +83,7 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 截断应在 1024 字符前的最后一个词边界处断开，并追加 "..." 表示被截断。
 
 **Key interfaces:**
-- `SkillMetadata` 类型的 `description` 字段 — 类型无需改动，
+- `SkillMetadata` 类型的 `description` 字段：类型无需改动，
   但填充它的校验/处理逻辑需要尊重词边界
 - 任何读取 SKILL.md frontmatter 并提取 description 的函数
 
@@ -115,7 +115,7 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 所有请求过该功能的 issue 链接。分诊新 issue 时，应检查这些文件以匹配。
 
 **Key interfaces:**
-- `.out-of-scope/` 中的 markdown 文件格式 — 每个文件应有 `# Concept Name`
+- `.out-of-scope/` 中的 markdown 文件格式：每个文件应有 `# Concept Name`
   标题、一行 `**Decision:**`、一行 `**Reason:**`、一个带 issue 链接的
   `**Prior requests:**` 列表
 - 分诊流程应在早期读取所有 `.out-of-scope/*.md`，按概念相似度匹配新 issue
@@ -149,7 +149,7 @@ diff 符合项目的命令结构。还剩两个缺口：错误仍以人类可读
 新标志没有测试覆盖。
 
 **Desired behavior:**
-带 `--json` 时，所有输出——包括错误——是 stdout 上合法的 JSON，命令的退出码不变。
+带 `--json` 时，所有输出（包括错误）是 stdout 上合法的 JSON，命令的退出码不变。
 不带该标志时，现有的人类可读输出原样不动。
 
 **Key interfaces:**

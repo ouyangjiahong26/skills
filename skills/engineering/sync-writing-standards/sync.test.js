@@ -1,6 +1,6 @@
 'use strict';
 
-// sync.test.js — sync.js 单元测试，仅用 Node 内置模块。
+// sync.test.js：sync.js 单元测试，仅用 Node 内置模块。
 // 通过 spawnSync 调起子进程跑 sync.js，并通过 SKILL_DIR 环境变量
 // 把 standards.md 重定向到临时目录，从而不污染仓库自身。
 

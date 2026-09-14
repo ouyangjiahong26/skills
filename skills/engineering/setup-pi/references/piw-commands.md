@@ -45,4 +45,4 @@ piw-clean() {
 
 - 目录约定：worktree 放在主仓库**父目录**下的 `pi-<分支名>`（`/` 转 `-`）。
 - `piw-clean` 必须能定位主仓库（`git worktree list` 第一条）；在非 worktree 目录执行会打印用法并返回 1。
-- worktree 有未提交改动时强制删除，改动会丢失——`piw-clean` 会先警告再删。
+- worktree 有未提交改动时强制删除，改动会丢失；`piw-clean` 会先警告再删。

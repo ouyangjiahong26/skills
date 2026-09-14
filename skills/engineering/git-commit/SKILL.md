@@ -11,7 +11,7 @@ disable-model-invocation: true
 ### 1. 检查
 
 1. 从对话上下文列出本会话修改或新建的仓库文件。
-2. 运行 `git worktree list` 与 `git rev-parse --abbrev-ref HEAD`，记录当前所在 worktree 与分支。会话文件路径不在当前 cwd 所在 worktree 内（典型：误指向主仓库目录）时，停止并说明——提交将落到错误分支。
+2. 运行 `git worktree list` 与 `git rev-parse --abbrev-ref HEAD`，记录当前所在 worktree 与分支。会话文件路径不在当前 cwd 所在 worktree 内（典型：误指向主仓库目录）时，停止并说明：提交将落到错误分支。
 3. 当前分支是默认分支（`main`、`master`）时不得直接提交：先按 `references/git-workflow.md` 的命名规则确定功能分支名。
 4. 运行 `git diff --name-only`，识别不在该列表中的脏文件；它们属于会话外改动。
 5. 运行 `git diff --stat` 和 `git diff -- <会话文件>`，确认每项改动都应提交。

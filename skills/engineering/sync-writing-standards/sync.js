@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-// sync.js — 把 references/standards.md 三节注入目标仓库的 AGENTS.md / CLAUDE.md。
+// sync.js：把 references/standards.md 三节注入目标仓库的 AGENTS.md / CLAUDE.md。
 //
 // 用法: node sync.js [目标仓库根目录] [--file AGENTS.md|CLAUDE.md]
 //   不传目录默认 process.cwd()；--file 缺省 AGENTS.md。

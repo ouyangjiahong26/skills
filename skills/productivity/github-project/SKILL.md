@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # GitHub Project
 
-按当前仓库 `docs/agents/issue-tracker.md` 中的 Project 配置操作。没有该配置时停止，运行 `/setup-ouyangjiahong-skills`，不要猜 Project、字段或选项 ID。
+按当前仓库 `docs/agents/issue-tracker.md` 中的 Project 配置操作。没有该配置时停止，叫用户跑 `/setup-ouyangjiahong-skills`，不要猜 Project、字段或选项 ID。
 
 ## 规则
 
