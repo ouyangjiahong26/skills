@@ -35,7 +35,7 @@ gh pr list --head <branch> --json url,number --jq '.[0]'
 
 ## 3. 评审
 
-本轮会话已经对同一分支运行过 `/code-review` 时，复用结论；否则以 `git merge-base <base> <branch>` 为固定点运行 `/code-review`。
+本轮会话已经对同一分支调用过 Skill 工具传入 "code-review" 时，复用结论；否则以 `git merge-base <base> <branch>` 为固定点，调用 Skill 工具，传入 "code-review"。
 
 将安全漏洞、数据丢失或崩溃风险、规格缺失、范围蔓延和错误实现视为阻塞项。风格与可维护性建议不阻塞。
 
@@ -54,7 +54,7 @@ gh pr view <PR-number> --json state,isDraft,mergeable,mergeStateStatus
 - `state` 不是 `OPEN`：停止并报告。若 PR 因 head 分支被删而被 GitHub 自动关闭、且分支已重新推送，询问用户是否 `gh pr reopen` 后重跑本 skill。
 - `isDraft` 为 `true`（或 `mergeStateStatus` 为 `DRAFT`）：运行 `gh pr ready <PR-number>` 后继续。
 - `mergeable` 为 `CONFLICTING` 或 `mergeStateStatus` 为 `DIRTY`：存在冲突，交由 `/resolving-merge-conflicts`，解决并 push 后重跑本步。
-- `mergeStateStatus` 为 `BEHIND`：head 分支落后 base。`git fetch origin <base>` 后 `git rebase origin/<base>`（出现冲突同上交由 `/resolving-merge-conflicts`），再用 `git push --force-with-lease origin <branch>` 推送；回到本步开头重新预检——rebase 产生新 commit，CI 必须重跑。
+- `mergeStateStatus` 为 `BEHIND`：head 分支落后 base。`git fetch origin <base>` 后 `git rebase origin/<base>`（出现冲突同上交由 `/resolving-merge-conflicts`），再用 `git push --force-with-lease origin <branch>` 推送；回到本步开头重新预检：rebase 产生新 commit，CI 必须重跑。
 - `mergeStateStatus` 为 `BLOCKED`：被分支保护规则阻塞（如缺 review），报告原因，停止。
 
 可合并后运行：
@@ -137,4 +137,4 @@ cd <主仓库路径> && git pull origin <base>
 
 ## Project 同步
 
-仓库配置了 GitHub Project 时：开始实现前将关联 Issue 设为 `In progress`，创建 PR 后设为 `In review`；PR 合并并验证完成后，将 Issue 设为 `Done`，再以 `Completed` 原因关闭。PR 关闭但未合并时，不自动关闭 Issue 或设为 `No action`。使用 `/github-project` 操作并复核。
+仓库配置了 GitHub Project 时：开始实现前将关联 Issue 设为 `In progress`，创建 PR 后设为 `In review`；PR 合并并验证完成后，将 Issue 设为 `Done`，再以 `Completed` 原因关闭。PR 关闭但未合并时，不自动关闭 Issue 或设为 `No action`。提醒用户跑 `/github-project` 完成状态迁移，并复核结果。

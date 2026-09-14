@@ -3,6 +3,7 @@ set -euo pipefail
 
 # 回归检查：
 # 1. README / CLAUDE.md 里的安装命令必须指向当前仓库的 origin。
+#    CLAUDE.md 可以是指向 AGENTS.md 的整文件指针（内容就是 "AGENTS.md"），此时跟随它再查。
 # 2. 每个 SKILL.md 必须有 name 和 description 的 YAML frontmatter。
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
@@ -22,7 +23,15 @@ fi
 
 bad_refs=0
 while IFS= read -r file; do
-  if grep -qE "npx skills add [^[:space:]]+/$origin_name" "$file"; then
+  target="$file"
+  # 单行文件视为指针，跟随一次（CLAUDE.md -> AGENTS.md）。
+  if [ -f "$target" ] && [ "$(wc -l < "$target")" -le 1 ]; then
+    pointer="$(tr -d '[:space:]' < "$target")"
+    if [ -f "$pointer" ] && [ "$pointer" != "$target" ]; then
+      target="$pointer"
+    fi
+  fi
+  if grep -qE "npx skills add [^[:space:]]+/$origin_name" "$target"; then
     :
   else
     echo "error: $file does not reference the current origin ($origin_name)" >&2

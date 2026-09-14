@@ -40,7 +40,7 @@
 
 - **地图**：一个带 `wayfinder:map` 标签的 issue，承载 Notes / Decisions-so-far / Fog 正文。`glab issue create --label wayfinder:map`。（在有原生 epic 的 GitLab 套餐中，可以改用 epic 承载地图；但带标签的 issue 在所有套餐中都能用。）
 - **子工单**：一个 issue，在描述顶部带 `Part of #<map>`，标签为 `wayfinder:<type>`（`research`/`prototype`/`grilling`/`task`）。一旦被认领，工单指派给驱动的 dev。
-- **阻塞**：GitLab 的**原生阻塞链接**——规范的、UI 可见的表示。用 `/blocked_by #<n>` 快捷操作添加，发为 note（`glab issue note <child> --message "/blocked_by #<blocker>"`）。原生阻塞链接是 Premium/Ultimate 功能；在免费版（或不可用的地方）回退到描述顶部的 `Blocked by: #<n>, #<n>` 行。当所有阻塞方都关闭时，工单解除阻塞。
-- **前沿查询**：`glab issue list -F json` 限定到地图的子工单，丢弃任何有未关闭阻塞方的——一条指向未关闭 issue 的原生 `blocked_by` 链接（`glab api projects/:id/issues/:iid/links`），或 `Blocked by` 行中的未关闭 issue——或有 assignee 的；按地图中的顺序，第一个胜出。
-- **认领**：`glab issue update <n> --assignee @me`——会话的第一次写操作。
+- **阻塞**：GitLab 的**原生阻塞链接**：规范的、UI 可见的表示。用 `/blocked_by #<n>` 快捷操作添加，发为 note（`glab issue note <child> --message "/blocked_by #<blocker>"`）。原生阻塞链接是 Premium/Ultimate 功能；在免费版（或不可用的地方）回退到描述顶部的 `Blocked by: #<n>, #<n>` 行。当所有阻塞方都关闭时，工单解除阻塞。
+- **前沿查询**：`glab issue list -F json` 限定到地图的子工单，丢弃任何有未关闭阻塞方的（一条指向未关闭 issue 的原生 `blocked_by` 链接，用 `glab api projects/:id/issues/:iid/links` 查，或 `Blocked by` 行中的未关闭 issue），或有 assignee 的；按地图中的顺序，第一个胜出。
+- **认领**：`glab issue update <n> --assignee @me`：会话的第一次写操作。
 - **解决**：`glab issue note <n> --message "<answer>"`，然后 `glab issue close <n>`，然后在地图的 Decisions-so-far 中追加一条上下文指针（gist + 链接）。

@@ -55,7 +55,7 @@ GitHub 的 issue 和 PR 共享编号空间，所以 `#42` 可能是其中任一�
 
 - **地图**：一个带 `wayfinder:map` 标签的 issue，承载 Notes / Decisions-so-far / Fog 正文。`gh issue create --label wayfinder:map`。
 - **子工单**：一个 issue，作为 GitHub sub-issue 链接到地图（通过 `gh api` 调 sub-issues 端点）。在未启用 sub-issues 的地方，把子工单加到地图正文的 task list 中，并在子工单正文顶部放 `Part of #<map>`。标签：`wayfinder:<type>`（`research`/`prototype`/`grilling`/`task`）。一旦被认领，工单指派给驱动的 dev。
-- **阻塞**：GitHub 的**原生 issue 依赖**——规范的、UI 可见的表示。用 `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>` 添加一条边，其中 `<blocker-db-id>` 是阻塞方的数字 **database id**（`gh api repos/<owner>/<repo>/issues/<n> --jq .id`，_不是_ `#number` 或 `node_id`）。GitHub 报告 `issue_dependencies_summary.blocked_by`（仅未关闭的阻塞方——实时闸门）。在依赖不可用的地方，回退到子工单正文顶部的 `Blocked by: #<n>, #<n>` 行。当所有阻塞方都关闭时，工单解除阻塞。
+- **阻塞**：GitHub 的**原生 issue 依赖**：规范的、UI 可见的表示。用 `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>` 添加一条边，其中 `<blocker-db-id>` 是阻塞方的数字 **database id**（`gh api repos/<owner>/<repo>/issues/<n> --jq .id`，_不是_ `#number` 或 `node_id`）。GitHub 报告 `issue_dependencies_summary.blocked_by`（仅未关闭的阻塞方，即实时闸门）。在依赖不可用的地方，回退到子工单正文顶部的 `Blocked by: #<n>, #<n>` 行。当所有阻塞方都关闭时，工单解除阻塞。
 - **前沿查询**：列出地图下未关闭的子工单（`gh issue list --state open`，范围限定到地图的 sub-issues / task list），丢弃任何有未关闭阻塞方（`issue_dependencies_summary.blocked_by > 0`，或 `Blocked by` 行中的未关闭 issue）或有 assignee 的；按地图中的顺序，第一个胜出。
-- **认领**：`gh issue edit <n> --add-assignee @me`——会话的第一次写操作。
+- **认领**：`gh issue edit <n> --add-assignee @me`：会话的第一次写操作。
 - **解决**：`gh issue comment <n> --body "<answer>"`，然后 `gh issue close <n>`，然后在地图的 Decisions-so-far 中追加一条上下文指针（gist + 链接）。
