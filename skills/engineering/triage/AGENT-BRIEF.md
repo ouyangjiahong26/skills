@@ -38,7 +38,11 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 
 ## 模板
 
+下面是 brief 的正文结构，前面冠上 AI 贡献标记再发布：
+
 ```markdown
+> **[AI Generated]** 本评论由 AI 完成。
+
 ## Agent Brief
 
 **Category:** bug / enhancement

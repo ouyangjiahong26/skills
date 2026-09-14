@@ -31,6 +31,10 @@ CLI 读取 `.claude-plugin/marketplace.json`，把 skill 软链到 `~/.claude/sk
 3. 干活时用 [`/implement`](./skills/engineering/implement/SKILL.md) 或 [`/tdd`](./skills/engineering/tdd/SKILL.md) 推进实现；卡在难调的 bug 上时换 [`/diagnosing-bugs`](./skills/engineering/diagnosing-bugs/SKILL.md)。
 4. 干完活用 [`/code-review`](./skills/engineering/code-review/SKILL.md) 审查改动，[`/git-commit`](./skills/engineering/git-commit/SKILL.md) 提交，[`/open-pr`](./skills/productivity/open-pr/SKILL.md) 开 PR、合并。
 
+## GitHub 管理
+
+AI 提交的 issue 和 PR，标题以 `[AI Generated]` 开头；AI 写的评论，首行标明由 AI 完成还是 AI 辅助完成。维护者扫一眼就知道该按什么信任级别去读，也清楚责任落在谁身上。约定见 [`docs/agents/ai-contribution.md`](./docs/agents/ai-contribution.md)。
+
 ## Skill 列表
 
 ### Engineering

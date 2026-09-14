@@ -16,7 +16,7 @@ issue tracker 和分诊标签术语应当已提供。如未提供，叫用户跑
 
 和用户确认这些接口符合预期。
 
-3. 用下面的模板写规格，然后发布到项目 issue tracker。套上 `ready-for-agent` 分诊标签：不需要额外分诊。
+3. 用下面的模板写规格，然后发布到项目 issue tracker。标题以 `[AI Generated]` 开头；套上 `ready-for-agent` 分诊标签，不需要额外分诊。
 
 <spec-template>
 

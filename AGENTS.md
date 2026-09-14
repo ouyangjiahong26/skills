@@ -20,6 +20,10 @@ Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-
 
 Single-context: read `CONTEXT.md` at the repo root and `docs/adr/` for architectural decisions. See `docs/agents/domain.md`。
 
+### AI 贡献标记
+
+AI 提交的 issue 和 PR 标题以 `[AI Generated]` 开头；AI 写的评论首行标明「由 AI 完成」还是「AI 辅助完成」。见 `docs/agents/ai-contribution.md`。
+
 ## 交流语言
 
 始终使用中文与用户交流。代码、commit message、PR 描述等技术输出也用中文。
