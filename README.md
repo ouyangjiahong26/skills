@@ -45,6 +45,7 @@ CLI 读取 `.claude-plugin/marketplace.json`，把 skill 软链到 `~/.claude/sk
 | [codebase-design](./skills/engineering/codebase-design/SKILL.md) | "深模块"共享术语：设计接口、找深化机会、定接口位置 | `codebase-design`、`深模块` |
 | [to-spec](./skills/engineering/to-spec/SKILL.md) | 把当前对话综合成规格，发布到 issue tracker | `to-spec` |
 | [implement](./skills/engineering/implement/SKILL.md) | 基于 spec 或 ticket 执行一段实现，配 TDD 和 code-review | `implement`、`实现` |
+| [implement-spec](./skills/engineering/implement-spec/SKILL.md) | 把规格和工单图在单分支上实现成一个 PR，并行子代理推进 | `implement-spec`、`实现规格` |
 | [tdd](./skills/engineering/tdd/SKILL.md) | 测试驱动开发，红-绿循环 | `tdd`、`TDD`、`red-green` |
 | [code-review](./skills/engineering/code-review/SKILL.md) | 两轴审查 diff：规范（编码准则）与规格（issue/spec） | `code-review`、`review since` |
 | [diagnosing-bugs](./skills/engineering/diagnosing-bugs/SKILL.md) | 难调 bug 和性能回归的诊断流程 | `diagnose`、`debug` |
