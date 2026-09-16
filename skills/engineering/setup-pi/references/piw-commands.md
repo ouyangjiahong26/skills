@@ -20,7 +20,7 @@ piw() {
 # 用法: piw-clean             在 worktree 内执行：清理当前 worktree 与当前分支
 #       piw-clean <分支名>     在任意位置执行：清理该分支 checkout 的 worktree 与分支
 piw-clean() {
-  local branch="${1:-}" here main wt target
+  local branch="${1:-}" here main wt target base
   here="$(pwd)"
   # 定位主仓库：git worktree list 第一条即主仓库
   main="$(git worktree list --porcelain 2>/dev/null | awk '$1=="worktree"{print substr($0,10); exit}')"
@@ -46,15 +46,23 @@ piw-clean() {
       || { echo "worktree $wt 有未提交改动，强制删除（改动将丢失）"; git worktree remove --force "$wt"; }
     git worktree prune
   fi
-  # 删分支。squash / rebase 合并会重写 SHA，tip 不是 base 的祖先，git branch -d 会误判
-  # 「未合并」；故用 git cherry 按 patch-id 判等：出现 '+' 行才算真有未合并的改动。
+  # 删分支。git branch -d 只看 tip 是否为 base 的祖先，squash / rebase 合并重写 SHA 后会误判
+  # 「未合并」，故分两步判断分支内容是否已进目标分支：
+  #   1. git cherry 逐个 patch-id 比对：普通合并、rebase、单提交 squash 都能认出；
+  #   2. squash 把多个提交压成一个，逐个 patch-id 对不上，改看内容：分支相对 merge-base 的
+  #      改动能否在目标分支上反向应用，能则说明这些改动已经在里面。
+  # 两条都不成立才保留分支。
   target="$(git -C "$main" rev-parse --abbrev-ref HEAD)"
+  base="$(git -C "$main" merge-base "$target" "$branch" 2>/dev/null)"
   if ! git -C "$main" show-ref --verify --quiet "refs/heads/$branch"; then
     echo "本地无分支 '$branch'，无需删除"
-  elif git -C "$main" cherry "$target" "$branch" 2>/dev/null | command grep -q '^+'; then
-    echo "分支 '$branch' 有未合并进 $target 的改动，已保留"
-  else
+  elif ! git -C "$main" cherry "$target" "$branch" 2>/dev/null | command grep -q '^+'; then
     git -C "$main" branch -D "$branch"
+  elif [ -n "$base" ] \
+    && git -C "$main" diff "$base" "$branch" | git -C "$main" apply --check --reverse - 2>/dev/null; then
+    git -C "$main" branch -D "$branch"     # squash 合并：这些改动已经出现在目标分支上
+  else
+    echo "分支 '$branch' 有未合并进 $target 的改动，已保留"
   fi
   echo "已清理 worktree，当前位于主仓库: $main"
 }
@@ -70,5 +78,8 @@ piw-clean() {
 
 - 目录约定：worktree 放在主仓库**父目录**下的 `pi-<分支名>`（`/` 转 `-`）。
 - `piw-clean` 必须能定位主仓库（`git worktree list` 第一条）；不在仓库内会报错返回 1。
-- 删分支前用 `git cherry <主仓库当前分支> <分支>` 按 patch-id 判等，而不是 `git branch -d` 的祖先判据：squash / rebase 合并后内容已进 base、但提交 SHA 不同，`-d` 会误报「未合并」并留下分支。只有出现 `+` 行（补丁在 base 中找不到）才保留分支并说明。
+- 删分支的判据不是 `git branch -d` 的祖先关系（squash / rebase 合并重写 SHA，内容已进 base 也会被判「未合并」，留下分支），而是两步：
+  1. `git cherry <主仓库当前分支> <分支>` 逐个 patch-id 比对，出现 `+` 行说明该提交的补丁在 base 中找不到；
+  2. 全部是 `-` / 空时直接删；出现 `+` 时再退一步看内容——把分支相对 `merge-base` 的改动反向应用到 base 上（`git apply --check --reverse`），能应用说明这些改动已经在 base 里（多提交 squash 合并就属于这种）。
+  两条都不成立才保留分支并说明。
 - worktree 有未提交改动时强制删除，改动会丢失；`piw-clean` 会先警告再删。
