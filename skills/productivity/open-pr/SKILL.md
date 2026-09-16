@@ -29,7 +29,7 @@ gh pr list --head <branch> --json url,number --jq '.[0]'
    - 从 `git log <base>..<branch> --pretty=%s` 找关联 `#N`；标题写 `[AI Generated][<类型>] <描述>`，类型取大写标签（`[FIX]`、`[DOCS]`…），描述取第一条 commit message 去掉 `type(scope):` 前缀后的部分。
    - 起草 body：关联 issue、改动摘要、测试命令及结果；没有关联 issue 时明确写无关联 issue。
    - 用 `gh pr create --base <base> --head <branch> --title "[AI Generated][<类型>] <描述>" --body "<body>"` 创建。
-4. 报告 PR URL。
+4. 按「Project 同步」把 PR 加入 Project 并置 `In review`，报告 PR URL。
 
 `gh` 未登录时提示用户运行 `gh auth login`；不要猜测或替代认证方式。
 
@@ -94,6 +94,8 @@ gh pr view <PR-number> --json state --jq .state   # 必须输出 MERGED
 git push origin --delete <branch>
 ```
 
+按「Project 同步」把 PR 项与关联 Issue 置 `Done`，关联 Issue 以 `Completed` 原因关闭。
+
 本地分支删除在清理阶段由主仓库上下文处理。合并冲突时停止，交由 `/resolving-merge-conflicts` 处理。
 
 ## 6. 清理与验证
@@ -132,7 +134,7 @@ cd <主仓库路径> && git pull origin <base>
 
 ### 报告
 
-报告以下可验证结果：远端分支已推送、PR URL、评审结论、CI 状态、合并方式、远端分支是否已删除、主仓库 base 是否已同步；worktree 与本地分支删除交由主仓库上下文（附 `piw-clean <branch>` 或手动命令）。
+报告以下可验证结果：远端分支已推送、PR URL、评审结论、CI 状态、合并方式、PR 与关联 Issue 的 Project 状态、远端分支是否已删除、主仓库 base 是否已同步；worktree 与本地分支删除交由主仓库上下文（附 `piw-clean <branch>` 或手动命令）。
 
 ## 边界
 
@@ -143,4 +145,15 @@ cd <主仓库路径> && git pull origin <base>
 
 ## Project 同步
 
-仓库配置了 GitHub Project 时：开始实现前将关联 Issue 设为 `In progress`，创建 PR 后设为 `In review`；PR 合并并验证完成后，将 Issue 设为 `Done`，再以 `Completed` 原因关闭。PR 关闭但未合并时，不自动关闭 Issue 或设为 `No action`。提醒用户跑 `/github-project` 完成状态迁移，并复核结果。
+状态迁移由本 skill 自己执行；`/github-project` 是手动 skill，本流程里不调用它。项目、字段与选项 ID 取自当前仓库 `docs/agents/issue-tracker.md`；没有该配置时跳过本节，并在报告里写明。
+
+关联 Issue 在实现开始时置 `In progress`，这是实现流程的动作，不在本 skill 范围。本 skill 负责以下迁移：
+
+| 时机 | 动作 |
+|---|---|
+| 创建 PR 后（第 2 步） | 把 **PR 自身**加入 Project，Status 置 `In review` |
+| 合并后（第 5 步） | PR 项与关联 Issue 均置 `Done`；关联 Issue 以 `Completed` 原因关闭 |
+| 无关联 issue | 只迁移 PR 项 |
+| PR 关闭但未合并 | Issue 保持原状，既不关闭也不置 `No action` |
+
+写前用 `gh project item-list` 读目标 item 的当前值，避免重复添加或覆盖未知字段；写后用同样的查询复核，把最终 Status 写进第 6 步报告。写入失败或配置缺失时报告原因，请用户跑 `/github-project`。
