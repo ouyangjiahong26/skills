@@ -116,7 +116,7 @@ cd <主仓库路径> && git pull origin <base>
 ```
 
 4. 本会话清理到此为止。worktree 与本地分支不在本会话删除，交由主仓库上下文（新会话或用户手动）：
-   - 装了 `piw` 时用 `piw-clean <branch>` 一条完成：移除 worktree、prune、删分支，并已按 patch-id 判断分支内容是否进过 base，squash 合并的分支也能删掉。
+   - 装了 `piw` 时用 `piw-clean <branch>` 一条完成：移除 worktree、prune、删分支。
    - 没有 `piw` 时手动两步：`git worktree remove <worktree路径> && git worktree prune`，再删分支——squash 合并后本地提交不在 base 历史中，`git branch -d` 会误报 "not fully merged"，须用户确认后 `-D`。
    向用户报告命令与原因。
 
