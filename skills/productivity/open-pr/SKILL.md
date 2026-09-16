@@ -115,18 +115,18 @@ cd <主仓库路径> && git checkout <base>   # 主仓库应已在 base；不在
 cd <主仓库路径> && git pull origin <base>
 ```
 
-4. 本会话清理到此为止。剩余两项不在本会话执行，交由主仓库上下文（新会话或用户手动）：
-   - `git worktree remove <worktree路径> && git worktree prune`
-   - `git branch -d/-D <branch>`：squash 合并后本地提交不在 base 历史中，`-d` 会报 "not fully merged"，需用户确认后 `-D`；且须在 worktree remove 之后执行。
-   向用户报告这两条命令与原因。
+4. 本会话清理到此为止。worktree 与本地分支不在本会话删除，交由主仓库上下文（新会话或用户手动）：
+   - 装了 `piw` 时用 `piw-clean <branch>` 一条完成：移除 worktree、prune、删分支。
+   - 没有 `piw` 时手动两步：`git worktree remove <worktree路径> && git worktree prune`，再删分支——squash 合并后本地提交不在 base 历史中，`git branch -d` 会误报 "not fully merged"，须用户确认后 `-D`。
+   向用户报告命令与原因。
 
 ### 普通场景
 
-在主仓库依次执行：`git checkout <base>`、`git pull origin <base>`、`git branch -d <branch>`（同样不自动 `-D`）。远端分支已在第 5 步删除。
+在主仓库依次执行：`git checkout <base>`、`git pull origin <base>`，再按 worktree 场景的同两条路径删本地分支（`piw-clean <branch>`，或用户确认后 `git branch -D <branch>`）。远端分支已在第 5 步删除。
 
 ### 报告
 
-报告以下可验证结果：远端分支已推送、PR URL、评审结论、CI 状态、合并方式、远端分支是否已删除、主仓库 base 是否已同步；worktree 与本地分支删除交由主仓库上下文（附命令）。
+报告以下可验证结果：远端分支已推送、PR URL、评审结论、CI 状态、合并方式、远端分支是否已删除、主仓库 base 是否已同步；worktree 与本地分支删除交由主仓库上下文（附 `piw-clean <branch>` 或手动命令）。
 
 ## 边界
 
