@@ -6,12 +6,12 @@
 
 | 产物 | 位置 | 标记 |
 |---|---|---|
-| Issue 标题 | 最开头 | `[AI Generated]` |
-| PR 标题 | 最开头 | `[AI Generated]` |
+| Issue 标题 | 最开头 | `[AI Generated][<类型>]` |
+| PR 标题 | 最开头 | `[AI Generated][<类型>]` |
 | 评论 | 第一行 | `> **[AI Generated]** 本评论由 AI 完成。` |
 | 评论 | 第一行 | `> **[AI Assisted]** 本评论由 AI 辅助完成。` |
 
-标题写成 `[AI Generated] <原标题>`，标记与标题之间一个空格；标题已带标记的不再叠加。
+标题写成 `[AI Generated][<类型>] <标题>`：标记在最前，紧跟方括号类型标签，再空一格写标题，如 `[AI Generated][FIX] 修正 piw-clean 的合并判断`。类型标签按改动性质取大写，取值同 [git-commit 的类型表](../../skills/engineering/git-commit/references/git-workflow.md)（`[FIX]`、`[DOCS]`、`[FEAT]`、`[REFACTOR]`、`[TEST]`、`[CHORE]`、`[STYLE]`）。标题已带标记的不再叠加。
 
 两类评论的区别，在于人类是否动过内容本身：
 

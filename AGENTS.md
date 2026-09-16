@@ -22,7 +22,7 @@ Single-context: read `CONTEXT.md` at the repo root and `docs/adr/` for architect
 
 ### AI 贡献标记
 
-AI 提交的 issue 和 PR 标题以 `[AI Generated]` 开头；AI 写的评论首行标明「由 AI 完成」还是「AI 辅助完成」。见 `docs/agents/ai-contribution.md`。
+AI 提交的 issue 和 PR 标题以 `[AI Generated][<类型>]` 开头（类型是大写标签，如 `[FIX]`、`[DOCS]`）；AI 写的评论首行标明「由 AI 完成」还是「AI 辅助完成」。见 `docs/agents/ai-contribution.md`。
 
 ## 交流语言
 

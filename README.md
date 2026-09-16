@@ -33,7 +33,7 @@ CLI 读取 `.claude-plugin/marketplace.json`，把 skill 软链到 `~/.claude/sk
 
 ## GitHub 管理
 
-AI 提交的 issue 和 PR，标题以 `[AI Generated]` 开头；AI 写的评论，首行标明由 AI 完成还是 AI 辅助完成。维护者扫一眼就知道该按什么信任级别去读，也清楚责任落在谁身上。约定见 [`docs/agents/ai-contribution.md`](./docs/agents/ai-contribution.md)。
+AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头；AI 写的评论，首行标明由 AI 完成还是 AI 辅助完成。维护者扫一眼就知道该按什么信任级别去读，也清楚责任落在谁身上。约定见 [`docs/agents/ai-contribution.md`](./docs/agents/ai-contribution.md)。
 
 ## Skill 列表
 
