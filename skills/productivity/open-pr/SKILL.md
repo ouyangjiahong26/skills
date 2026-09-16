@@ -74,7 +74,13 @@ gh pr checks <PR-number>
 得到明确选择后执行：
 
 ```bash
-gh pr merge <PR-number> --<mode>
+# squash：必须显式给 --subject。不给的话 GitHub 拿带标记的 PR 标题当提交标题，
+# 标记就进了提交历史；提交标题按 git-commit 的格式写，正文写改动摘要。
+gh pr merge <PR-number> --squash --subject "<type>(<scope>): <描述> (#<PR-number>)" --body-file <文件>
+
+# merge / rebase：提交标题沿用分支上的 commit message，本身不带标记
+gh pr merge <PR-number> --merge
+gh pr merge <PR-number> --rebase
 ```
 
 **不要加 `--delete-branch`**：gh 删除本地分支前会切到默认分支，worktree 场景下与主仓库占用的 base 分支冲突（报 ``'master' is already used by worktree``），且报错时远端分支也删不掉。
