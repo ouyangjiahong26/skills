@@ -13,6 +13,8 @@
 
 标题写成 `[AI Generated][<类型>] <标题>`：标记在最前，紧跟方括号类型标签，再空一格写标题，如 `[AI Generated][FIX] 修正 piw-clean 的合并判断`。类型标签按改动性质取大写，取值同 [git-commit 的类型表](../../skills/engineering/git-commit/references/git-workflow.md)（`[FIX]`、`[DOCS]`、`[FEAT]`、`[REFACTOR]`、`[TEST]`、`[CHORE]`、`[STYLE]`）。标题已带标记的不再叠加。
 
+标记只加在 issue 与 PR 标题上。commit message 不带标记，按 `git-commit` 的类型表写。
+
 两类评论的区别，在于人类是否动过内容本身：
 
 - **由 AI 完成**：agent 独立写成，人类没改内容。分诊记录、agent brief、按规格实现的 PR 属此类。人类只点了同意、没改内容，仍算这一类。
