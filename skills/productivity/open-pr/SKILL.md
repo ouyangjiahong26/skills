@@ -26,9 +26,9 @@ gh pr list --head <branch> --json url,number --jq '.[0]'
 ```
 
 3. 已有 PR 时复用其 URL 和编号，不动它的标题。否则：
-   - 从 `git log <base>..<branch> --pretty=%s` 找关联 `#N`，标题取第一条 commit message，前面加 `[AI Generated] ` 前缀。
+   - 从 `git log <base>..<branch> --pretty=%s` 找关联 `#N`；标题写 `[AI Generated][<类型>] <描述>`，类型取大写标签（`[FIX]`、`[DOCS]`…），描述取第一条 commit message 去掉 `type(scope):` 前缀后的部分。
    - 起草 body：关联 issue、改动摘要、测试命令及结果；没有关联 issue 时明确写无关联 issue。
-   - 用 `gh pr create --base <base> --head <branch> --title "[AI Generated] <title>" --body "<body>"` 创建。
+   - 用 `gh pr create --base <base> --head <branch> --title "[AI Generated][<类型>] <描述>" --body "<body>"` 创建。
 4. 报告 PR URL。
 
 `gh` 未登录时提示用户运行 `gh auth login`；不要猜测或替代认证方式。
