@@ -23,7 +23,7 @@ piw-clean() {
   local branch="${1:-}" here main wt target
   here="$(pwd)"
   # 定位主仓库：git worktree list 第一条即主仓库
-  main="$(git worktree list --porcelain 2>/dev/null | awk '$1=="worktree"{print $2; exit}')"
+  main="$(git worktree list --porcelain 2>/dev/null | awk '$1=="worktree"{print substr($0,10); exit}')"
   if [ -z "$main" ]; then
     echo "piw-clean: 当前目录不在 git 仓库内"
     return 1
