@@ -1,8 +1,8 @@
 # Skills
 
-[![skills.sh](https://skills.sh/b/cislunarspace/skills)](https://skills.sh/cislunarspace/skills)
+[![skills.sh](https://skills.sh/b/ouyangjiahong26/skills)](https://skills.sh/ouyangjiahong26/skills)
 
-一套给 Claude Code、Kimi Code 等 Agent 编码工具用的 skills，小、可组合，基于日常工程习惯。软件工程部分对齐 [mattpocock/skills](https://github.com/mattpocock/skills) 并翻译成中文，共 17 个，覆盖从规格到 PR 的日常循环。
+一套给 AI 编码 agent 用的 skills，小、可组合，来自日常工程习惯。共 19 个，大部分对齐 [mattpocock/skills](https://github.com/mattpocock/skills) 并翻译成中文，覆盖从规格讨论到 PR 合并的日常循环。
 
 ## 写作要求的来历
 
@@ -13,10 +13,10 @@
 ## 快速开始
 
 ```bash
-npx skills@latest add cislunarspace/skills
+npx skills@latest add ouyangjiahong26/skills
 ```
 
-CLI 读取 `.claude-plugin/marketplace.json`，把 skill 软链到 `~/.claude/skills/`。安装时会提示选择要安装的分组（Engineering / Productivity / 全部）。安装后，在 agent 里直接用 `/grill-with-docs`、`/code-review`、`/git-commit`、`/open-pr` 等命令。
+CLI 读取 `.claude-plugin/marketplace.json`，安装时提示选择分组（Engineering / Productivity / 全部）和要安装到的 agent。skill 以软链方式安装，`git pull` 即同步。安装后在 agent 里直接用 `/grill-with-docs`、`/code-review`、`/git-commit`、`/open-pr` 等命令。
 
 ### pi（pi coding agent）
 
@@ -63,30 +63,31 @@ AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头；AI 写
 |---|---|---|
 | [grilling](./skills/productivity/grilling/SKILL.md) | 对计划或设计进行不懈质询（逐轮问完整条前沿） | `grill` |
 | [handoff](./skills/productivity/handoff/SKILL.md) | 把当前会话压缩成交接文档，供下一个 agent 接手 | `handoff` |
+| [github-project](./skills/productivity/github-project/SKILL.md) | 管理 GitHub Project 中 issue/PR 的加入、查询与状态迁移 | `github-project` |
 | [open-pr](./skills/productivity/open-pr/SKILL.md) | 推送分支、创建 PR、评审、合并并清理，含 worktree 场景 | `open-pr`、`提 PR`、`合并分支` |
 
 ## 相关项目
 
-- **[mattpocock/skills](https://github.com/mattpocock/skills)**：本仓库软件工程 skill 的上游。软件工程部分的 skill 对齐该项目当前版本、翻译成中文；自创 skill（`sync-writing-standards`、`setup-ouyangjiahong-skills`、`setup-pi`、`git-commit`、`open-pr`）为本仓库独有。
+- **[mattpocock/skills](https://github.com/mattpocock/skills)**：本仓库软件工程 skill 的上游。软件工程部分的 skill 对齐该项目当前版本、翻译成中文；自创 skill（`sync-writing-standards`、`setup-ouyangjiahong-skills`、`setup-pi`、`git-commit`、`open-pr`、`github-project`）为本仓库独有。
 
 ## 目录结构
 
 ```
-skills/
-├── engineering/                 # 工程相关 skills
-│   ├── <name>/SKILL.md
-│   └── ...
-├── productivity/                # 通用生产力 skills
-.claude-plugin/
-└── marketplace.json             # 分组清单（CLI 读取入口）
-scripts/                         # 辅助脚本
+.
+├── skills/
+│   ├── engineering/            # 工程相关 skills
+│   │   └── <name>/SKILL.md
+│   └── productivity/           # 通用生产力 skills
+├── .claude-plugin/
+│   └── marketplace.json        # 分组清单（CLI 读取入口）
+└── scripts/                    # 辅助脚本
 ```
 
 ## 新增 Skill
 
 1. 在 `skills/<group>/<name>/` 下创建 `SKILL.md`（含 frontmatter：`name`、`description`）。写作规范见 [`docs/skill-writing.md`](./docs/skill-writing.md)，可从 [`docs/templates/SKILL.md`](./docs/templates/SKILL.md) 复制骨架起步
 2. 在 `.claude-plugin/marketplace.json` 对应分组的 `skills` 数组里加一行（必须以 `./` 开头）
-3. 重跑 `npx skills add cislunarspace/skills`
+3. 重跑 `npx skills add ouyangjiahong26/skills`
 
 ## 测试
 
