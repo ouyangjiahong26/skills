@@ -1,14 +1,16 @@
-# Git 工作流
+# Git 工作流（缺省约定）
 
-本仓库的 commit message 使用中文，采用类 Conventional Commits 格式。
+缺省的提交与分支约定。目标仓库有自己的约定（`CONTRIBUTING.md`、`AGENTS.md`、`docs/` 中的提交与分支规则）时以目标仓库为准，本文件只在目标仓库没有约定时使用。
 
-## 格式
+## Commit message 格式
+
+类 Conventional Commits，描述用中文：
 
 ```
 <type>(<scope>): <description>
 ```
 
-- `scope` 可选；涉及具体 skill 或模块时加上，例如 `(git-commit)`、`(dispatch)`。
+- `scope` 可选；涉及具体 skill 或模块时加上，例如 `(git-commit)`、`(open-pr)`。
 - `description` 用中文，句末不加句号。
 - 标题尽量一行；需要补充说明时，空一行再写 body。
 
@@ -27,24 +29,22 @@
 ## 示例
 
 - `docs(git-commit): 重写工作流说明并汉化脚本注释`
-- `feat(git-commit): support Kimi Code session tracking`
-- `refactor(dispatch): 参考 implement 进一步压缩，71→52 行`
-- `docs: 更新 AGENTS.md，添加技能安装和新增说明`
+- `feat(open-pr): PR 入板并自行完成 Project 状态迁移`
+- `fix(setup-pi): piw-clean 按 patch-id 判断分支是否已合并`
+- `docs: 明确 AI 标记只加标题，squash 合并须显式指定提交标题`
 
 ## 分支
 
-默认在功能分支上提交，不在 `main` / `master` 上直接提交。默认分支只接受合并进来的改动。
+默认在功能分支上提交，不在默认分支（`main` / `master`）上直接提交；默认分支只接受合并进来的改动。
 
-- 从最新的默认分支切出：`git switch main && git pull && git switch -c <branch>`。
+- 从最新的默认分支切出：`git switch <默认分支> && git pull && git switch -c <branch>`。
 - 分支名 `<type>/<slug>`，`type` 与 commit 类型同词汇，`slug` 用小写英文与连字符：
-
   - `docs/ai-contribution`
   - `chore/repo-polish`
   - `fix/issue-40-filter-delete`
-
-- 一个分支对应一个关注点；同一分支上的多个 commit 各自独立成篇（见下）。
+- 一个分支对应一个关注点；同一分支上的多个 commit 各自独立成篇（见拆分原则）。
 - 已经在默认分支上提交、且尚未推送时，用 `git switch -c <branch>` 把提交带到新分支；已推送的公共历史不要改写。
-- 提交完成后推送分支，由 `/open-pr` 开 PR；合并、关闭与删分支都在 PR 生命周期里处理。
+- 提交后由 `/open-pr` 推送分支并开 PR，由 `/merge-pr` 合并与清理；提交环节不推送、不合并。
 
 ## 拆分原则
 
