@@ -26,4 +26,4 @@ AI 产出的 issue 和 PR 由发起它的维护者负责：AI 说得对不对，
 
 ## 谁执行
 
-`to-spec`、`triage`、`open-pr`、`implement-spec` 写 issue tracker 时按本约定加标记；`docs/agents/issue-tracker.md` 的约定里也记了这一条。
+`to-spec`、`triage`、`open-pr`、`merge-pr`、`implement-spec` 写 issue tracker 时按本约定加标记；`docs/agents/issue-tracker.md` 的约定里也记了这一条。
