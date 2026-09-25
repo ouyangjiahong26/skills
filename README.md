@@ -2,7 +2,7 @@
 
 [![skills.sh](https://skills.sh/b/ouyangjiahong26/skills)](https://skills.sh/ouyangjiahong26/skills)
 
-一套给 AI 编码 agent 用的 skills，小、可组合，来自日常工程习惯。共 19 个，大部分对齐 [mattpocock/skills](https://github.com/mattpocock/skills) 并翻译成中文，覆盖从规格讨论到 PR 合并的日常循环。
+一套给 AI 编码 agent 用的 skills，小、可组合，来自日常工程习惯。共 20 个，大部分对齐 [mattpocock/skills](https://github.com/mattpocock/skills) 并翻译成中文，覆盖从规格讨论到 PR 合并的日常循环。
 
 ## 写作要求的来历
 
@@ -16,7 +16,7 @@
 npx skills@latest add ouyangjiahong26/skills
 ```
 
-CLI 读取 `.claude-plugin/marketplace.json`，安装时提示选择分组（Engineering / Productivity / 全部）和要安装到的 agent。skill 以软链方式安装，`git pull` 即同步。安装后在 agent 里直接用 `/grill-with-docs`、`/code-review`、`/git-commit`、`/open-pr` 等命令。
+CLI 读取 `.claude-plugin/marketplace.json`，安装时提示选择分组（Engineering / Productivity / 全部）和要安装到的 agent。skill 以软链方式安装，`git pull` 即同步。安装后在 agent 里直接用 `/grill-with-docs`、`/code-review`、`/git-commit`、`/open-pr`、`/merge-pr` 等命令。
 
 ### pi（pi coding agent）
 
@@ -29,7 +29,7 @@ CLI 读取 `.claude-plugin/marketplace.json`，安装时提示选择分组（Eng
 1. 拿到新仓库，先跑 [`/setup-ouyangjiahong-skills`](./skills/engineering/setup-ouyangjiahong-skills/SKILL.md)，配置 issue tracker、分诊标签和领域文档；再跑 [`/sync-writing-standards`](./skills/engineering/sync-writing-standards/SKILL.md)，把交流语言、写作要求和编码准则同步到 `AGENTS.md`，后续会话自动遵守。
 2. 做事之前讨论计划，配 [`/grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md) 追问打磨，把术语和架构决定写进 `CONTEXT.md` 和 ADR；讨论成熟后用 [`/to-spec`](./skills/engineering/to-spec/SKILL.md) 固化成 issue。
 3. 干活时用 [`/implement`](./skills/engineering/implement/SKILL.md) 或 [`/tdd`](./skills/engineering/tdd/SKILL.md) 推进实现；卡在难调的 bug 上时换 [`/diagnosing-bugs`](./skills/engineering/diagnosing-bugs/SKILL.md)。
-4. 干完活用 [`/code-review`](./skills/engineering/code-review/SKILL.md) 审查改动，[`/git-commit`](./skills/engineering/git-commit/SKILL.md) 提交，[`/open-pr`](./skills/productivity/open-pr/SKILL.md) 开 PR、合并。
+4. 干完活用 [`/code-review`](./skills/engineering/code-review/SKILL.md) 审查改动，[`/git-commit`](./skills/engineering/git-commit/SKILL.md) 提交，[`/open-pr`](./skills/productivity/open-pr/SKILL.md) 开 PR 并评审，[`/merge-pr`](./skills/productivity/merge-pr/SKILL.md) 合并并清理。
 
 ## GitHub 管理
 
@@ -64,11 +64,12 @@ AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头；AI 写
 | [grilling](./skills/productivity/grilling/SKILL.md) | 对计划或设计进行不懈质询（逐轮问完整条前沿） | `grill` |
 | [handoff](./skills/productivity/handoff/SKILL.md) | 把当前会话压缩成交接文档，供下一个 agent 接手 | `handoff` |
 | [github-project](./skills/productivity/github-project/SKILL.md) | 管理 GitHub Project 中 issue/PR 的加入、查询与状态迁移 | `github-project` |
-| [open-pr](./skills/productivity/open-pr/SKILL.md) | 推送分支、创建 PR、评审、合并并清理，含 worktree 场景 | `open-pr`、`提 PR`、`合并分支` |
+| [open-pr](./skills/productivity/open-pr/SKILL.md) | 推送分支、创建 PR（AI 标记标题）、评审改动 | `open-pr`、`提 PR` |
+| [merge-pr](./skills/productivity/merge-pr/SKILL.md) | 预检评审与 CI、合并 PR、清理分支与 worktree | `merge-pr`、`合并分支` |
 
 ## 相关项目
 
-- **[mattpocock/skills](https://github.com/mattpocock/skills)**：本仓库软件工程 skill 的上游。软件工程部分的 skill 对齐该项目当前版本、翻译成中文；自创 skill（`sync-writing-standards`、`setup-ouyangjiahong-skills`、`setup-pi`、`git-commit`、`open-pr`、`github-project`）为本仓库独有。
+- **[mattpocock/skills](https://github.com/mattpocock/skills)**：本仓库软件工程 skill 的上游。软件工程部分的 skill 对齐该项目当前版本、翻译成中文；自创 skill（`sync-writing-standards`、`setup-ouyangjiahong-skills`、`setup-pi`、`git-commit`、`open-pr`、`merge-pr`、`github-project`）为本仓库独有。
 
 ## 目录结构
 
