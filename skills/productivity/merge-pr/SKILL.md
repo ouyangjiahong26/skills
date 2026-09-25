@@ -56,7 +56,7 @@ gh pr checks <PR-number>
 
 ```bash
 # squash：必须显式给 --subject。不给的话 GitHub 拿带标记的 PR 标题当提交标题，
-# 标记就进了提交历史；提交标题按该仓库的 commit 约定写（缺省模板见 git-commit
+# 标记就进了提交历史；提交标题按该仓库的 commit 约定写（缺省约定见 git-commit
 # 的 references/git-workflow.md），正文写改动摘要。
 gh pr merge <PR-number> --squash --subject "<type>(<scope>): <描述> (#<PR-number>)" --body-file <文件>
 

@@ -16,7 +16,7 @@ disable-model-invocation: true
    - 改动不在会话文件中 → 会话外改动，单列出来；
    - 会话文件未出现在改动中 → 实际未改动，剔除并说明。
 4. 运行 `git diff --stat` 与 `git diff -- <会话文件>` 确认每项改动都应提交；新建的未跟踪文件直接读内容确认。
-5. 确定提交与分支约定：目标仓库有自己的约定（`CONTRIBUTING.md`、`AGENTS.md`、`docs/` 中的提交与分支规则）时以它为准，没有时用 `references/git-workflow.md` 作缺省模板。据此起草 commit message；当前分支是默认分支时，按约定的命名规则确定功能分支名。
+5. 确定提交与分支约定：目标仓库有自己的约定（`CONTRIBUTING.md`、`AGENTS.md`、`docs/` 中的提交与分支规则）时以它为准，没有时用 `references/git-workflow.md` 作缺省约定。据此起草 commit message；当前分支是默认分支时，按约定的命名规则确定功能分支名。
 6. 从对话上下文识别关联 issue（`#N` 或 issue 链接）。
 
 ### 2. 确认并提交
