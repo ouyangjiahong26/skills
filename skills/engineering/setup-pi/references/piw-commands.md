@@ -1,6 +1,6 @@
 # piw / piw-clean 命令（POSIX shell 函数）
 
-只用于 Linux（及同类 POSIX）的 bash / zsh：写入 `~/.bashrc`（或 `~/.zshrc` 等等效 rc 文件）的**非交互 guard 之前**，这样非交互加载时也能定义。Windows 上的同名命令是 PowerShell 函数（`$PROFILE`），不适用本模板，也不要用它覆盖。
+用于 POSIX shell 的 bash / zsh，含 Windows 上从 git-bash / MSYS 使用 `pi` 的场景：写入 `~/.bashrc`（或 `~/.zshrc` 等等效 rc 文件）的**非交互 guard 之前**，这样非交互加载时也能定义。Windows 上从 PowerShell 使用 `pi` 时用 PowerShell 模板 [piw-commands-windows.md](./piw-commands-windows.md)，两个文件互不覆盖。
 
 ```bash
 # piw: 新建分支+worktree 并直接进入 pi
