@@ -10,7 +10,7 @@ disable-model-invocation: true
 
 读取，不要假设：
 
-- 判断平台与宿主 shell：`uname -s` 为 `MINGW*` / `MSYS*` / `CYGWIN*` 说明在 Windows 的 git-bash / MSYS 里，按 POSIX 处理；用户从 PowerShell 使用 `pi` 时按 Windows PowerShell 处理。
+- 判断平台：`uname -s` 为 `Windows_NT` / `MINGW*` / `MSYS*` / `CYGWIN*`，或 `$env:OS` 为 `Windows_NT`，都算 Windows。
 - Windows 上先确定用户从哪个 shell 用 `pi`：PowerShell 还是 git-bash / MSYS。Windows PowerShell 5.1 与 PowerShell 7 的 `$PROFILE` 是两个文件，也要先确认版本。
 - 交互 shell 中 `type piw piw-clean`（bash / zsh）或 `Get-Command piw,piw-clean`（PowerShell）是否已定义；目标文件里是否已有同名函数及其行号范围。
 - 用户实际使用的 shell 及目标文件（bash `~/.bashrc`，zsh `~/.zshrc`，PowerShell `$PROFILE`）。
@@ -24,7 +24,7 @@ disable-model-invocation: true
 - `piw-clean [分支名]`：在 worktree 内不带参数清理当前 worktree；在主仓库带分支名清理对应 worktree。删分支前按 patch-id 判断内容是否已进 base，squash / rebase 合并的分支也能删掉；确有未合并改动的分支保留并说明。
 - **worktree 有未提交改动时会强制删除，改动丢失。必须先向用户说明。**
 
-bash 的 `~/.bashrc` 里函数块放在非交互 guard 之前，非交互加载时也能定义。Windows PowerShell 的 `$PROFILE` 必须存成 UTF-8 带 BOM，否则 5.1 按系统 ANSI 码页解码，中文注释和提示乱码。
+bash 的 `~/.bashrc` 里函数块放在非交互 guard 之前，非交互加载时也能定义。Windows PowerShell 的 `$PROFILE` 必须存成 UTF-8 带 BOM。
 
 ## 3. 确认写入
 
