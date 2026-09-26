@@ -64,8 +64,8 @@ AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头；AI 写
 | [grilling](./skills/productivity/grilling/SKILL.md) | 对计划或设计进行不懈质询（逐轮问完整条前沿） | `grill` |
 | [handoff](./skills/productivity/handoff/SKILL.md) | 把当前会话压缩成交接文档，供下一个 agent 接手 | `handoff` |
 | [github-project](./skills/productivity/github-project/SKILL.md) | 管理 GitHub Project 中 issue/PR 的加入、查询与状态迁移 | `github-project` |
-| [open-pr](./skills/productivity/open-pr/SKILL.md) | 推送分支、创建 PR（AI 标记标题）、评审改动 | `open-pr`、`提 PR` |
-| [merge-pr](./skills/productivity/merge-pr/SKILL.md) | 预检评审与 CI、合并 PR、清理分支与 worktree | `merge-pr`、`合并分支` |
+| [open-pr](./skills/productivity/open-pr/SKILL.md) | 推送分支、创建 PR（AI 标记标题）、评审改动；分支是栈的一层时指向下层分支并入栈 | `open-pr`、`提 PR` |
+| [merge-pr](./skills/productivity/merge-pr/SKILL.md) | 预检评审与 CI、合并 PR（栈内自底向上走异步合并接口）、清理分支与 worktree | `merge-pr`、`合并分支` |
 
 ## 相关项目
 
