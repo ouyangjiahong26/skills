@@ -4,9 +4,9 @@
   "private": true,
   "description": "Personal Claude Code skill collection. Install with `npm run link`.",
   "scripts": {
-    "link": "scripts/link-skills.sh",
-    "list": "scripts/list-skills.sh",
-    "check": "scripts/check-skills.sh",
-    "test": "node --test 'skills/**/*.test.js'"
+    "link": "node scripts/link-skills.js",
+    "list": "node scripts/list-skills.js",
+    "check": "node scripts/check-skills.js",
+    "test": "node --test \"skills/**/*.test.js\""
   }
 }

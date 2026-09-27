@@ -17,7 +17,7 @@ test("user can checkout with valid cart", async () => {
 特征：
 
 - 测试用户/调用方关心的行为
-- 只用公开 API
+- 只走公开接口
 - 撑过内部重构
 - 描述做什么（WHAT），不是怎么做（HOW）
 - 一个测试一个逻辑断言

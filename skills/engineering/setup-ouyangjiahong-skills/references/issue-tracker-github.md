@@ -36,27 +36,25 @@ GitHub 的 issue 和 PR 共享编号空间，所以 `#42` 可能是其中任一�
 
 ## GitHub Project
 
-- Issue 和 PR 都加入仓库约定的 GitHub Project；Project 是工作状态的来源，label 只表达分类、领域或分诊角色。
-- 使用 `gh project item-list <number> --owner <owner> --format json` 查询项目项，使用 `gh project item-edit <item-id> --project-id <project-id> --field-id <field-id> --single-select-option-id <option-id>` 更新字段。
-- 默认状态流转：`Inbox` → `Backlog` → `Ready` → `In progress` → `In review` → `Done` / `No action`。
-- `Done` 对应 Issue 以 `Completed` 关闭；`No action` 对应 Issue 以 `Not planned` 关闭；重开的 Issue 回到 `Inbox`。
-- `Priority` 使用 `P0`–`P3`，`Start Date` 由维护者维护。具体 Project、字段 ID 和选项 ID 由仓库的 `docs/agents/issue-tracker.md` 记录。
+**使用 Project：否。** _（仓库用 GitHub Project 管理工作状态时改为 `是`，并填下表；`/github-project`、`/triage`、`/open-pr`、`/merge-pr` 读取此配置。）_
 
-### 工作流状态迁移
+| 项 | 值 |
+| --- | --- |
+| Owner | `<owner>` |
+| Project 编号 | `<number>` |
+| Project ID | `<PVT_...>` |
+| Status 字段 ID | `<PVTSSF_...>` |
 
-- 新 Issue：加入 Project，设为 `Inbox`。
-- 分诊确认但未排期：`Backlog`；可开始：`Ready`。
-- 开始实现：`In progress`；创建 PR：`In review`。
-- PR 合并并验证完成：Issue 关闭原因为 `Completed`，Project 设为 `Done`。
-- PR 关闭但未合并：不自动关闭 Issue 或设为 `No action`，等待维护者决定。
+Status 选项 ID：
 
-## Wayfinding 操作
+| 选项 | 选项 ID |
+| --- | --- |
+| `Inbox` | `<id>` |
+| `Backlog` | `<id>` |
+| `Ready` | `<id>` |
+| `In progress` | `<id>` |
+| `In review` | `<id>` |
+| `Done` | `<id>` |
+| `No action` | `<id>` |
 
-被 `/wayfinder` 使用。**地图**是一个 issue，其下挂**子** issue 作为工单。
-
-- **地图**：一个带 `wayfinder:map` 标签的 issue，承载 Notes / Decisions-so-far / Fog 正文。`gh issue create --label wayfinder:map`。
-- **子工单**：一个 issue，作为 GitHub sub-issue 链接到地图（通过 `gh api` 调 sub-issues 端点）。在未启用 sub-issues 的地方，把子工单加到地图正文的 task list 中，并在子工单正文顶部放 `Part of #<map>`。标签：`wayfinder:<type>`（`research`/`prototype`/`grilling`/`task`）。一旦被认领，工单指派给驱动的 dev。
-- **阻塞**：GitHub 的**原生 issue 依赖**：规范的、UI 可见的表示。用 `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>` 添加一条边，其中 `<blocker-db-id>` 是阻塞方的数字 **database id**（`gh api repos/<owner>/<repo>/issues/<n> --jq .id`，_不是_ `#number` 或 `node_id`）。GitHub 报告 `issue_dependencies_summary.blocked_by`（仅未关闭的阻塞方，即实时闸门）。在依赖不可用的地方，回退到子工单正文顶部的 `Blocked by: #<n>, #<n>` 行。当所有阻塞方都关闭时，工单解除阻塞。
-- **前沿查询**：列出地图下未关闭的子工单（`gh issue list --state open`，范围限定到地图的 sub-issues / task list），丢弃任何有未关闭阻塞方（`issue_dependencies_summary.blocked_by > 0`，或 `Blocked by` 行中的未关闭 issue）或有 assignee 的；按地图中的顺序，第一个胜出。
-- **认领**：`gh issue edit <n> --add-assignee @me`：会话的第一次写操作。
-- **解决**：`gh issue comment <n> --body "<answer>"`，然后 `gh issue close <n>`，然后在地图的 Decisions-so-far 中追加一条上下文指针（gist + 链接）。
+`Priority`（`P0`–`P3`）、`Start Date` 等其他字段按同样格式记录字段 ID 与选项 ID；没记录的字段，技能不写。状态迁移规则见 `/github-project`。

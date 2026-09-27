@@ -46,7 +46,7 @@ gh api /repos/<owner>/<repo>/stacks/<栈号> --jq '.base.ref, ([.pull_requests[]
    2. 只有两层时链是 `<下层分支> <分支>`，trunk 取下层 PR 的 `baseRefName`。
    3. `gh stack link --base <trunk> <链…>`。缺层会报 `Cannot update stack: this would remove #N from the stack`，报错即停止，不自行拼链。
    4. 复核：`gh api /repos/<owner>/<repo>/pulls/<PR号> --jq '.stack'` 应给出 `number`、`position`、`size`。
-5. 把 PR 自身加入 Project，Status 置 `In review`：项目与字段配置取自目标仓库 `docs/agents/issue-tracker.md`，写前用 `gh project item-list` 读 item 现值、写后复核（纪律同 `github-project` 的规则）；配置缺失或写入失败时报告原因并跳过。之后报告 PR URL。
+5. 把 PR 自身加入 Project，Status 置 `In review`：项目与字段配置取自目标仓库 `docs/agents/issue-tracker.md`，写前用 `gh project item-list` 读 item 现值、写后复核（纪律同 `github-project` 的规则）；配置缺失、标为「否」或写入失败时报告原因并跳过。之后报告 PR URL。
 
 `gh` 未登录时提示用户运行 `gh auth login`；不要猜测或替代认证方式。
 

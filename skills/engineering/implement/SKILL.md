@@ -12,4 +12,4 @@ disable-model-invocation: true
 
 完成后，调用 Skill 工具，传入 "code-review"，审查工作。
 
-把工作提交到当前分支。
+把工作提交到当前分支。当前分支是默认分支时，先切出功能分支再提交；分支命名按目标仓库约定，没有约定时见 `git-commit` 的 `references/git-workflow.md`。

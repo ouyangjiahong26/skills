@@ -26,6 +26,14 @@ GitHub remote 默认 GitHub（`gh`），GitLab remote 默认 GitLab（`glab`）�
 
 写入 `docs/agents/issue-tracker.md`。
 
+选 GitHub 时接着问是否用 GitHub Project 管理工作状态（`/github-project`、`/triage`、`/open-pr`、`/merge-pr` 依赖它）。用时：
+
+1. `gh project list --owner <owner>` 列出候选，让用户选定。
+2. `gh project view <number> --owner <owner> --format json --jq .id` 取 Project ID；`gh project field-list <number> --owner <owner> --format json` 取 Status 等字段 ID 与选项 ID。
+3. 按模板的「GitHub Project」节填表，标为「是」。Status 缺模板列出的某个选项时，报告缺口，不自行建选项。
+
+`gh` 报缺 `project` 权限时，请用户跑 `gh auth refresh -s project`。不用 Project 时保留「否」。
+
 ### B. 分诊标签
 
 只有 `triage` 可用时配置。默认保留：`needs-triage`、`needs-info`、`ready-for-agent`、`ready-for-human`、`wontfix`；用户拒绝默认值时，再收集覆盖项。
@@ -54,6 +62,6 @@ GitHub remote 默认 GitHub（`gh`），GitLab remote 默认 GitLab（`glab`）�
 
 ## 4. 写入与结束
 
-- 优先编辑 `CLAUDE.md`，否则编辑 `AGENTS.md`；两者都不存在时询问用户。不要额外创建另一份。
+- 优先编辑 `AGENTS.md`，否则编辑 `CLAUDE.md`；两者都不存在时询问用户。不要额外创建另一份。
 - 已有 `## Agent skills` 时在其中更新，避免重复。
 - 完成后说明哪些工程技能会读取 `docs/agents/*.md`。

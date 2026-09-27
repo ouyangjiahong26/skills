@@ -93,7 +93,10 @@ AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头；AI 写
 ## 测试
 
 ```bash
-npm test
+npm test        # node:test 跑 skills/ 下所有 .test.js
+npm run check   # 校验 README / AGENTS.md 的安装命令与各 SKILL.md 的 frontmatter
 ```
 
 用 Node 内置的 `node:test` 跑 `skills/` 下所有 `.test.js`。改任何 skill 之前和之后都跑一遍。
+
+`npm run link [分组…]` 把 skill 软链到 `~/.claude/skills`，`npm run list` 列出仓库内的 skill。三个脚本都是 Node，不依赖 bash。

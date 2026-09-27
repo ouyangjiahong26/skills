@@ -1,10 +1,10 @@
 # AGENTS.md
 
-Skills 集中在 `skills/` 目录，按分组（engineering、productivity、in-progress）组织。每个 skill 一个目录，目录名即 skill 名；内部固定有 `SKILL.md`，补充材料（如 `DEEPENING.md`、`tests.md`）放在 skill 根目录，通过 markdown 链接引用。
+Skills 集中在 `skills/` 目录，按分组（engineering、productivity）组织。每个 skill 一个目录，目录名即 skill 名；内部固定有 `SKILL.md`，补充材料（如 `DEEPENING.md`、`tests.md`）放在 skill 根目录，通过 markdown 链接引用。
 
-安装：跑 `npx skills add cislunarspace/skills`，把 skill 软链到 `~/.claude/skills/`。链接是软链，`git pull` 自动同步。
+安装：跑 `npx skills add ouyangjiahong26/skills`，把 skill 软链到 `~/.claude/skills/`。链接是软链，`git pull` 自动同步。
 
-新增 skill：在 `skills/<group>/<name>/` 下放 `SKILL.md`（写作规范见 `docs/skill-writing.md`，骨架模板在 `docs/templates/SKILL.md`），在 `.claude-plugin/marketplace.json` 对应分组的 `skills` 数组里加一行，重跑 `npx skills add cislunarspace/skills`。
+新增 skill：在 `skills/<group>/<name>/` 下放 `SKILL.md`（写作规范见 `docs/skill-writing.md`，骨架模板在 `docs/templates/SKILL.md`），在 `.claude-plugin/marketplace.json` 对应分组的 `skills` 数组里加一行，重跑 `npx skills add ouyangjiahong26/skills`。
 
 ## Agent skills
 

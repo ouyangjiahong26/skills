@@ -7,14 +7,14 @@ disable-model-invocation: true
 
 # GitHub Project
 
-按当前仓库 `docs/agents/issue-tracker.md` 中的 Project 配置操作。没有该配置时停止，叫用户跑 `/setup-ouyangjiahong-skills`，不要猜 Project、字段或选项 ID。
+按当前仓库 `docs/agents/issue-tracker.md` 的「GitHub Project」节操作。该节不存在、标为「否」或缺所需的字段 / 选项 ID 时停止，叫用户跑 `/setup-ouyangjiahong-skills`，不要猜 Project、字段或选项 ID。
 
 ## 规则
 
 - Project Status 是工作状态；label 只表达分类、领域或分诊角色。
 - Issue 与 PR 都应加入 Project；同一编号可能对应 Issue 或 PR，先用 `gh pr view <n>` 确认，失败再用 `gh issue view <n>`。
 - 所有写操作前先读取 Project item，避免重复添加或覆盖未知字段。
-- 不自动关闭 Issue；`Done` 只用于 PR 已合并且行为已验证的工作，关闭原因使用 `Completed`。
+- 只在迁到 `Done`（原因 `Completed`）或 `No action`（原因 `Not planned`）时关闭 Issue，其他迁移不关闭。`Done` 只用于 PR 已合并且行为已验证的工作。
 - PR 关闭但未合并时，不自动设为 `No action`。
 
 ## 常用流程
@@ -22,7 +22,7 @@ disable-model-invocation: true
 1. 读取仓库配置和目标 Issue/PR。
 2. 用 `gh project item-list <number> --owner <owner> --format json` 查找已有 item。
 3. 若不存在，用 `gh project item-add <number> --owner <owner> --url <issue-or-pr-url>` 加入项目。
-4. 用配置中的 project ID、field ID 和 option ID 执行 `gh project item-edit`。
+4. 用配置中的 ID 写字段：`gh project item-edit --id <item-id> --project-id <project-id> --field-id <field-id> --single-select-option-id <option-id>`（日期字段用 `--date`）。
 5. 再次查询确认目标 item、Status 和其他字段已更新。
 
 ## 状态迁移
