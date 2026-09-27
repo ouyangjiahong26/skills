@@ -7,6 +7,6 @@
     "link": "node scripts/link-skills.js",
     "list": "node scripts/list-skills.js",
     "check": "node scripts/check-skills.js",
-    "test": "node --test \"skills/**/*.test.js\""
+    "test": "node --test \"scripts/*.test.js\" \"skills/**/*.test.js\""
   }
 }
