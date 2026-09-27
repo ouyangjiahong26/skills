@@ -17,7 +17,7 @@ disable-model-invocation: true
    - 会话文件未出现在改动中 → 实际未改动，剔除并说明。
 4. 运行 `git diff --stat` 与 `git diff -- <会话文件>` 确认每项改动都应提交；新建的未跟踪文件直接读内容确认。
 5. 确定提交与分支约定：目标仓库有自己的约定（`CONTRIBUTING.md`、`AGENTS.md`、`docs/` 中的提交与分支规则）时以它为准，没有时用 `references/git-workflow.md` 作缺省约定。据此起草 commit message；当前分支是默认分支时，按约定的命名规则确定功能分支名。
-6. 从对话上下文识别关联 issue（`#N` 或 issue 链接）。
+6. 从对话上下文识别关联 issue（`#N` 或 issue 链接），在 commit message 中写 `Fixes #N` 或 `Related to #N`（按用户意图选）。本 skill 不关闭 Issue、不改 GitHub Project：PR 入板置 `In review` 由 `/open-pr` 做，合并后置 `Done` 并关闭 Issue 由 `/merge-pr` 做。
 
 ### 2. 确认并提交
 
@@ -43,10 +43,6 @@ git branch --show-current
 ```
 
 确认已提交的会话文件不再有未提交改动，且提交落在第 1 步确定的功能分支上、不在默认分支。
-
-### 4. 关联 Issue
-
-提交时只在 commit message 中保留准确的关联引用（如 `Fixes #123` 或 `Related to #123`，按用户意图选择）。`git-commit` 不关闭 Issue、不改 GitHub Project：这些在 PR 生命周期中由 `/open-pr`（PR 入板置 `In review`）与 `/merge-pr`（合并后置 `Done` 并关闭 Issue）处理。
 
 ## 边界情况
 

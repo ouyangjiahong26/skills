@@ -1,4 +1,4 @@
 # Windows 兼容：这些文件强制 LF 行尾，无视 core.autocrlf。
-# sync.sh 若被物化成 CRLF，bash 会因 shebang 行带 \r 而无法执行。
+# bash 脚本若被物化成 CRLF，会因 shebang 行带 \r 而无法执行。
 *.sh  text eol=lf
 *.md  text eol=lf
