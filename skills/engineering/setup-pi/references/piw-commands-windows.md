@@ -141,3 +141,59 @@ if (-not ($b.Length -ge 3 -and $b[0] -eq 0xEF -and $b[1] -eq 0xBB -and $b[2] -eq
 - 删分支判据与 POSIX 版一致：先 `git cherry` 比 patch-id，再退一步用 `git apply --check --reverse` 看内容；两条都不成立才保留分支并说明。
 - 失败路径打印中文提示后直接 `return`。PowerShell 函数没有退出码（POSIX 版在这些路径返回 1）；写成 `return 1` 会把 `1` 混进输出流。
 - worktree 有未提交改动时强制删除，改动会丢失；`piw-clean` 会先警告再删。
+
+## Windows Terminal：Ctrl+Shift+T 复制当前标签（继承 cwd）
+
+WT 的普通 `newTab` 不继承当前目录；`duplicateTab` 会复用 shell 通过 OSC 9;9 上报的最后工作目录。下面两处配合后，`Ctrl+Shift+T` = 复制当前标签（同一 profile、同一目录、同字体设置）。两处独立，可只取其一（cwd 跟踪对 `alt+shift+d` 的 splitMode: duplicate 分屏同样有效）。
+
+### 1. $PROFILE 末尾追加 prompt 包装
+
+放在 prompt 初始化（如 `Invoke-Expression (&starship init powershell)`）**之后**，包装当时生效的 prompt；没有 prompt 定制时包装的是默认 prompt，行为不变：
+
+```powershell
+# 让 Windows Terminal 跟踪当前目录（OSC 9;9），使 Ctrl+Shift+T（duplicateTab）
+# 新开的标签继承本窗口的 cwd。必须放在 prompt 初始化（如 starship init）之后。
+$global:__wtCwdPrompt = (Get-Command prompt).ScriptBlock
+function global:prompt {
+    if ($pwd.Provider.Name -eq 'FileSystem') {
+        $e = [char]27
+        Write-Host -NoNewline "$e]9;9;`"$($pwd.ProviderPath)`"$e\"
+    }
+    & $global:__wtCwdPrompt
+}
+```
+
+- 只在 FileSystem provider 下输出：注册表等 provider 的路径发给 WT 会报错。
+- 目录更新依赖提示符渲染：`cd` 之后出现过一次提示符（正常交互都会满足）才会上报。
+- 不支持 OSC 9;9 的终端会忽略该序列，无害。
+- 幂等：`$PROFILE` 里已能搜到 `]9;9;` 就跳过，不写第二份。
+- 追加后做与函数块相同的 UTF-8 带 BOM 归一化（见上节）。
+
+### 2. settings.json 把 Ctrl+Shift+T 绑到 duplicateTab
+
+定位 WT 的 settings.json（取先存在者；都没有则跳过本步并说明）：
+
+- Store 版：`$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json`
+- 解包版：`$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json`
+
+在 `actions` 数组加一条（WT 默认把 Ctrl+Shift+T 绑给 newTab，此条覆盖它）：
+
+```json
+{ "command": "duplicateTab", "keys": "ctrl+shift+t" }
+```
+
+- 已绑 `duplicateTab` → `ctrl+shift+t` 就跳过；`ctrl+shift+t` 绑了其他命令时展示差异，确认后替换。
+- settings.json 允许 `//` 注释和尾逗号（JSONC），严格 JSON 校验失败不代表 WT 拒绝该文件；含注释时跳过校验。
+- 想开全新空白标签用标签栏 `+` 按钮，或 `alt+shift+d` 分屏（splitMode: duplicate，同样继承目录）。
+- WT 保存 settings.json 后热加载，无需重开窗口。
+
+### 验证
+
+重开一个 PowerShell 会话（或 `. $PROFILE`），cd 后捕获 prompt 输出应含 OSC 序列且原提示符仍正常渲染：
+
+```powershell
+Set-Location C:\Windows
+(& { prompt } 6>&1 | Out-String) -match '\x1b\]9;9;"C:\\Windows"'
+```
+
+应输出 `True`。settings.json 无注释时 `Get-Content -Raw <路径> | ConvertFrom-Json` 应成功；手按 Ctrl+Shift+T 应复制出同目录标签。
