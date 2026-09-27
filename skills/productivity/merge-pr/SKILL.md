@@ -115,7 +115,7 @@ gh pr view <PR-number> --json state --jq .state   # 必须输出 MERGED
 git push origin --delete <branch>
 ```
 
-最后把 PR 项与关联 Issue 置 `Done`，关联 Issue 以 `Completed` 原因关闭；无关联 Issue 只迁 PR 项。栈内落地多层时，每层都做同样的迁移。项目与字段配置取自目标仓库 `docs/agents/issue-tracker.md`，写前用 `gh project item-list` 读 item 现值、写后复核（纪律同 `github-project` 的规则）；配置缺失或写入失败时报告原因，请用户跑 `/github-project`。
+最后把 PR 项与关联 Issue 置 `Done`，关联 Issue 以 `Completed` 原因关闭；无关联 Issue 只迁 PR 项。栈内落地多层时，每层都做同样的迁移。项目与字段配置取自目标仓库 `docs/agents/issue-tracker.md`，写前用 `gh project item-list` 读 item 现值、写后复核（纪律同 `github-project` 的规则）；配置缺失、标为「否」或写入失败时报告原因，请用户跑 `/github-project`。
 
 ## 4. 清理与验证
 

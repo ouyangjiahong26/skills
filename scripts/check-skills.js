@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 // 回归检查：
 // 1. README / AGENTS.md 里的安装命令必须指向当前仓库的 origin。
-//    文件可以是单行整文件指针（内容就是另一个文件名），此时跟随它再查。
 // 2. 每个 SKILL.md 必须有 name 和 description 的 YAML frontmatter。
 
 const fs = require('node:fs');
@@ -35,27 +34,8 @@ function readText(file) {
   }
 }
 
-function isFile(file) {
-  try {
-    return fs.statSync(file).isFile();
-  } catch {
-    return false;
-  }
-}
-
 function escapeRegExp(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-// 单行文件视为指针，跟随一次（CLAUDE.md -> AGENTS.md）。
-function resolvePointer(file) {
-  const text = readText(file);
-  if (text === null) return file;
-  if (text.split('\n').length - 1 > 1) return file;
-  const pointer = text.replace(/\s/g, '');
-  if (pointer === '') return file;
-  const candidate = path.resolve(repo, pointer);
-  return candidate !== file && isFile(candidate) ? candidate : file;
 }
 
 const { url, name: originName } = originRemote();
@@ -67,9 +47,7 @@ if (originName === '') {
 let badRefs = 0;
 const refPattern = new RegExp(`npx skills add \\S+/${escapeRegExp(originName)}`);
 for (const name of ['README.md', 'AGENTS.md']) {
-  const file = path.join(repo, name);
-  const target = resolvePointer(file);
-  const text = readText(target);
+  const text = readText(path.join(repo, name));
   if (text === null || !refPattern.test(text)) {
     console.error(`error: ${name} does not reference the current origin (${originName})`);
     badRefs++;
