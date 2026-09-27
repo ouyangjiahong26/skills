@@ -47,7 +47,7 @@ piw-clean() {
     git worktree prune
   fi
   # 删分支。git branch -d 只看 tip 是否为 base 的祖先，squash / rebase 合并重写 SHA 后会误判
-  # 「未合并」，故分两步判断分支内容是否已进目标分支：
+  # “未合并”，故分两步判断分支内容是否已进目标分支：
   #   1. git cherry 逐个 patch-id 比对：普通合并、rebase、单提交 squash 都能认出；
   #   2. squash 把多个提交压成一个，逐个 patch-id 对不上，改看内容：分支相对 merge-base 的
   #      改动能否在目标分支上反向应用，能则说明这些改动已经在里面。
@@ -78,7 +78,7 @@ piw-clean() {
 
 - 目录约定：worktree 放在主仓库**父目录**下的 `pi-<分支名>`（`/` 转 `-`）。
 - `piw-clean` 必须能定位主仓库（`git worktree list` 第一条）；不在仓库内会报错返回 1。
-- 删分支的判据不是 `git branch -d` 的祖先关系（squash / rebase 合并重写 SHA，内容已进 base 也会被判「未合并」，留下分支），而是两步：
+- 删分支的判据不是 `git branch -d` 的祖先关系（squash / rebase 合并重写 SHA，内容已进 base 也会被判“未合并”，留下分支），而是两步：
   1. `git cherry <主仓库当前分支> <分支>` 逐个 patch-id 比对，出现 `+` 行说明该提交的补丁在 base 中找不到；
   2. 全部是 `-` / 空时直接删；出现 `+` 时再退一步看内容——把分支相对 `merge-base` 的改动反向应用到 base 上（`git apply --check --reverse`），能应用说明这些改动已经在 base 里（多提交 squash 合并就属于这种）。
   两条都不成立才保留分支并说明。

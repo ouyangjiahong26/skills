@@ -30,9 +30,9 @@ GitHub remote 默认 GitHub（`gh`），GitLab remote 默认 GitLab（`glab`）�
 
 1. `gh project list --owner <owner>` 列出候选，让用户选定。
 2. `gh project view <number> --owner <owner> --format json --jq .id` 取 Project ID；`gh project field-list <number> --owner <owner> --format json` 取 Status 等字段 ID 与选项 ID。
-3. 按模板的「GitHub Project」节填表，标为「是」。Status 缺模板列出的某个选项时，报告缺口，不自行建选项。
+3. 按模板的“GitHub Project”节填表，标为“是”。Status 缺模板列出的某个选项时，报告缺口，不自行建选项。
 
-`gh` 报缺 `project` 权限时，请用户跑 `gh auth refresh -s project`。不用 Project 时保留「否」。
+`gh` 报缺 `project` 权限时，请用户跑 `gh auth refresh -s project`。不用 Project 时保留“否”。
 
 ### B. 分诊标签
 

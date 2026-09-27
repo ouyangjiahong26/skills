@@ -14,7 +14,7 @@ disable-model-invocation: true
 - Windows 上先确定用户从哪个 shell 用 `pi`：PowerShell 还是 git-bash / MSYS。Windows PowerShell 5.1 与 PowerShell 7 的 `$PROFILE` 是两个文件，也要先确认版本。
 - 交互 shell 中 `type piw piw-clean`（bash / zsh）或 `Get-Command piw,piw-clean`（PowerShell）是否已定义；目标文件里是否已有同名函数及其行号范围。
 - 用户实际使用的 shell 及目标文件（bash `~/.bashrc`，zsh `~/.zshrc`，PowerShell `$PROFILE`）。
-- 已有函数与模板的差异：旧版本用 `git branch -d` 删分支，squash 合并的分支会误报「未合并」而删不掉。
+- 已有函数与模板的差异：旧版本用 `git branch -d` 删分支，squash 合并的分支会误报“未合并”而删不掉。
 - Windows 上定位 Windows Terminal 的 settings.json：Store 版 `$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json`，解包版 `$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json`，取先存在者。
 - `$PROFILE` 是否已有 cwd 跟踪段（搜 `]9;9;`）、prompt 初始化（如 starship init）所在行；settings.json 的 actions 里是否已绑 `duplicateTab` 或 `ctrl+shift+t`。
 

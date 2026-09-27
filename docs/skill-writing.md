@@ -6,14 +6,14 @@ SKILL.md 是 agent 在编码过程中**被触发的行为指令**，不是一次
 
 ## 和任务 prompt 的区别
 
-常说的”好 prompt”五要素（Context / Request / Output Format / Constraints / Checkpoint）针对的是**给模型分配一次性任务**。Skill 是长期挂载、等调用的规范，Context 和 Output Format 每次调用都不同，写死进 SKILL.md 是错的。映射如下：
+常说的“好 prompt”五要素（Context / Request / Output Format / Constraints / Checkpoint）针对的是**给模型分配一次性任务**。Skill 是长期挂载、等调用的规范，Context 和 Output Format 每次调用都不同，写死进 SKILL.md 是错的。映射如下：
 
 | 任务 prompt 要素 | 在 skill 里怎么处理 |
 |---|---|
 | Context | 模型可调用 skill 的 `description`：写触发场景；手动 skill 的 `description`：写给用户的一行用途说明。正文不写调用时才有的背景 |
 | Request | 正文开头：写明核心行为（具体做什么动作） |
 | Output Format | 正文单独章节：只在 skill 有固定产出时写（如 commit message 格式、交接文档结构） |
-| Constraints | 正文章节：边界情况表 + 明确的”不要做什么” |
+| Constraints | 正文章节：边界情况表 + 明确的“不要做什么” |
 | Checkpoint | 正文章节：写明什么时候停下来问用户、什么时候自己继续 |
 
 ## frontmatter：调用边界
@@ -69,7 +69,7 @@ skill 涉及文件、git、网络、用户输入时，用表格列**情况 → �
 
 ### Checkpoint（何时暂停）
 
-写明哪些地方**必须停下来等用户**，哪些**自己做完整再说**。涉及不可逆操作的 skill 要写死”绝不自行执行”；纯确定性、无副作用的脚本型 skill 不用停。
+写明哪些地方**必须停下来等用户**，哪些**自己做完整再说**。涉及不可逆操作的 skill 要写死“绝不自行执行”；纯确定性、无副作用的脚本型 skill 不用停。
 
 只有三种情况该暂停：
 
@@ -105,8 +105,8 @@ skill 的产出有固定格式要求时，明确规定格式。如 commit messag
 
 ## 不该写的
 
-- **角色设定**（”你是一个资深工程师，擅长……”）。agent 的能力由底层模型决定。
-- **教 agent 怎么思考**（”以批判性思维审视””仔细想想”）。这类指令不改变行为输出。写”做什么”和”边界在哪”，不写”用什么心态”。
+- **角色设定**（“你是一个资深工程师，擅长……”）。agent 的能力由底层模型决定。
+- **教 agent 怎么思考**（“以批判性思维审视”“仔细想想”）。这类指令不改变行为输出。写“做什么”和“边界在哪”，不写“用什么心态”。
 - **死的 Context / Output**。调用时才有的背景，别写进 SKILL.md。
 - **为完整而注水**。没有边界情况就别编边界情况表，没有参数就别写 `argument-hint`。
 
