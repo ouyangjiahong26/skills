@@ -75,7 +75,7 @@ function piw-clean {
   }
 
   # 删分支。git branch -d 只看 tip 是否为 base 的祖先，squash / rebase 合并重写 SHA 后会误判
-  # 「未合并」，故分两步判断分支内容是否已进目标分支：
+  # “未合并”，故分两步判断分支内容是否已进目标分支：
   #   1. git cherry 逐个 patch-id 比对：普通合并、rebase、单提交 squash 都能认出；
   #   2. squash 把多个提交压成一个，逐个 patch-id 对不上，改看内容：分支相对 merge-base 的
   #      改动能否在目标分支上反向应用，能则说明这些改动已经在里面。

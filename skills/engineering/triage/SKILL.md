@@ -16,7 +16,7 @@ disable-model-invocation: true
 > **[AI Generated]** 本评论由 AI 完成。
 ```
 
-分诊评论写的是 agent 自己的判断，用「由 AI 完成」；整段只是转述维护者的结论时，改用 `> **[AI Assisted]** 本评论由 AI 辅助完成。`
+分诊评论写的是 agent 自己的判断，用“由 AI 完成”；整段只是转述维护者的结论时，改用 `> **[AI Assisted]** 本评论由 AI 辅助完成。`
 
 ## 参考文档
 
