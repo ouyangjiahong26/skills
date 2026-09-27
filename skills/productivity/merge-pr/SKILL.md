@@ -18,7 +18,7 @@ gh api /repos/<owner>/<repo>/pulls/<PR号> --jq '.stack.number // empty'
 gh api /repos/<owner>/<repo>/stacks/<栈号> --jq '.base.ref, ([.pull_requests[] | "\(.number) \(.head.ref) \(.state) \(.draft)"] | join("\n"))'
 ```
 
-`<owner>/<repo>` 由 `gh repo view --json nameWithOwner --jq .nameWithOwner` 取。第一行空即普通 PR，走下面各步中标注「普通 PR」的路径；非空时第二行给出栈底分支与每层的 PR 号、分支名、状态和是否 draft。栈内时本次要落地的层 = 从最低未合并层到目标 PR（含）。
+`<owner>/<repo>` 由 `gh repo view --json nameWithOwner --jq .nameWithOwner` 取。第一行空即普通 PR，走下面各步中标注“普通 PR”的路径；非空时第二行给出栈底分支与每层的 PR 号、分支名、状态和是否 draft。栈内时本次要落地的层 = 从最低未合并层到目标 PR（含）。
 4. 用 `git worktree list` 识别场景：
    - 当前目录不是主仓库（属于某个列出的 worktree）→ worktree 场景（默认）；
    - 否则 → 普通场景。
@@ -30,7 +30,7 @@ gh api /repos/<owner>/<repo>/stacks/<栈号> --jq '.base.ref, ([.pull_requests[]
 
 ### 评审
 
-本轮会话已有同一分支、其后无新 commit 的 `code-review` 结论则算通过；否则以 `git merge-base <base> <branch>` 为固定点调用 `code-review` skill。栈内 PR 的 base 是下层分支，这个固定点就是下层 tip，评审范围是本层 diff。有阻塞项（标准见 `/open-pr` 的「评审」节）就按来源列出并停止等待修复。
+本轮会话已有同一分支、其后无新 commit 的 `code-review` 结论则算通过；否则以 `git merge-base <base> <branch>` 为固定点调用 `code-review` skill。栈内 PR 的 base 是下层分支，这个固定点就是下层 tip，评审范围是本层 diff。有阻塞项（标准见 `/open-pr` 的“评审”节）就按来源列出并停止等待修复。
 
 ### 可合并性
 
@@ -43,7 +43,7 @@ gh pr view <PR-number> --json state,isDraft,mergeable,mergeStateStatus
 - `state` 不是 `OPEN`：停止并报告。若 PR 因 head 分支被删被 GitHub 自动关闭、且分支已重新推送，询问用户是否 `gh pr reopen` 后重跑本 skill。
 - `isDraft` 为 `true`（或 `mergeStateStatus` 为 `DRAFT`）：运行 `gh pr ready <PR-number>` 后继续。
 - `mergeable` 为 `CONFLICTING` 或 `mergeStateStatus` 为 `DIRTY`：存在冲突，交由 `/resolving-merge-conflicts`，解决并 push 后重跑本步。
-- `mergeStateStatus` 为 `BEHIND`：head 分支落后 base，按下面「非栈内 PR / 栈内 PR」的对应方式 rebase 后重跑本步。
+- `mergeStateStatus` 为 `BEHIND`：head 分支落后 base，按下面“非栈内 PR / 栈内 PR”的对应方式 rebase 后重跑本步。
 - `mergeStateStatus` 为 `BLOCKED`：被分支保护规则阻塞（如缺 review），报告原因，停止。
 
 **非栈内 PR** 落后时：`git fetch origin <base>` 后 `git rebase origin/<base>`（出现冲突同上交由 `/resolving-merge-conflicts`），再用 `git push --force-with-lease origin <branch>` 推送；回到本步开头重新预检：rebase 产生新 commit，评审与 CI 都要重做。
@@ -115,7 +115,7 @@ gh pr view <PR-number> --json state --jq .state   # 必须输出 MERGED
 git push origin --delete <branch>
 ```
 
-最后把 PR 项与关联 Issue 置 `Done`，关联 Issue 以 `Completed` 原因关闭；无关联 Issue 只迁 PR 项。栈内落地多层时，每层都做同样的迁移。项目与字段配置取自目标仓库 `docs/agents/issue-tracker.md`，写前用 `gh project item-list` 读 item 现值、写后复核（纪律同 `github-project` 的规则）；配置缺失、标为「否」或写入失败时报告原因，请用户跑 `/github-project`。
+最后把 PR 项与关联 Issue 置 `Done`，关联 Issue 以 `Completed` 原因关闭；无关联 Issue 只迁 PR 项。栈内落地多层时，每层都做同样的迁移。项目与字段配置取自目标仓库 `docs/agents/issue-tracker.md`，写前用 `gh project item-list` 读 item 现值、写后复核（纪律同 `github-project` 的规则）；该节标为“否”时不做 Project 迁移；配置缺失时报告原因、请用户跑 `/setup-ouyangjiahong-skills`；写入失败时报告原因、请用户跑 `/github-project`。
 
 ## 4. 清理与验证
 
