@@ -86,20 +86,22 @@ audit_repo() {
     has "$m" && is_code=1
   done
 
-  # license
-  if [ -z "$license" ]; then mark red license "repo.license 为 null"; else mark ok license "$license"; fi
+  # license(代码仓缺为 🔴,非代码仓为信息项)
+  if [ -z "$license" ]; then
+    if [ $is_code = 1 ]; then mark red license "repo.license 为 null"; else mark wht license "非代码仓,无 LICENSE(信息项)"; fi
+  else mark ok license "$license"; fi
 
   # readme
   if grep -q '^README' <<<"$tree"; then
-    # 链接属主:README 指向他人同名仓库
+    # 链接属主:README 徽章 / git clone 行指向他人同名仓库(致谢类正文链接不算)
     local readme readme_owner stale=""
     for rp in README.md README.rst README.txt README; do
       has "$rp" && readme=$(api "repos/$full/contents/$rp" | jq -r '.content' 2>/dev/null | base64 -d 2>/dev/null || true) && break
     done
     readme_owner=$(jq -r '.owner.login' <<<"$meta")
     if [ -n "${readme:-}" ]; then
-      stale=$(grep -oE "(github\.com|img\.shields\.io/github[^ )]*)/[^/ )]*/${full##*/}" <<<"$readme" | grep -v "/$readme_owner/" | head -1 || true)
-      if [ -n "$stale" ]; then mark red 链接属主 "README 引用他人属主仓库:$stale"; else mark ok readme "存在且属主一致"; fi
+      stale=$(grep -E 'shields\.io|git clone|badge' <<<"$readme" | grep -oE "(github\.com|img\.shields\.io/github[^ )]*)/[^/ )]*/${full##*/}" | grep -v "/$readme_owner/" | head -1 || true)
+      if [ -n "$stale" ]; then mark red 链接属主 "README 徽章/clone 引用他人属主仓库:$stale"; else mark ok readme "存在且属主一致"; fi
     else
       mark ok readme "存在"
     fi
