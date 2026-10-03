@@ -55,6 +55,7 @@ AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头；AI 写
 | [diagnosing-bugs](./skills/engineering/diagnosing-bugs/SKILL.md) | 难调 bug 和性能回归的诊断流程 | `diagnose`、`debug` |
 | [triage](./skills/engineering/triage/SKILL.md) | 把 issue/PR 推过分诊状态机，产出 agent 可认领的 brief | `triage`、`分诊` |
 | [git-commit](./skills/engineering/git-commit/SKILL.md) | 只提交本会话改动的文件，检查分支归属，确认后提交 | `git-commit`、`提交` |
+| [github-repo-audit](./skills/engineering/github-repo-audit/SKILL.md) | 检查 GitHub 仓库配置完整度,输出分级问题清单 | `repo audit`、`仓库体检` |
 | [resolving-merge-conflicts](./skills/engineering/resolving-merge-conflicts/SKILL.md) | 解决进行中的 git merge/rebase 冲突 | `解决冲突`、`merge conflict` |
 
 ### Productivity
