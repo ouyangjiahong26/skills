@@ -68,8 +68,18 @@ function piw-clean {
   if ($wt) {
     git worktree remove $wt 2>$null
     if ($LASTEXITCODE -ne 0) {
-      Write-Output "worktree $wt 有未提交改动，强制删除（改动将丢失）"
+      # 失败可能是未提交改动，也可能是目录被其他进程占用，git 不作区分；一律走 --force：
+      # 占用时 git 会删光内容但删不掉目录本身（prune 后只剩空壳），下面再兜底。
+      Write-Output "worktree $wt 未干净或被占用，强制删除（未提交改动将丢失）"
       git worktree remove --force $wt 2>$null
+      if ($LASTEXITCODE -ne 0 -and (Test-Path -LiteralPath $wt)) {
+        # Windows：目录被进程占用（终端/编辑器停在里面）时删不掉目录本身。再补删一次，
+        # 仍失败就明确警告，不静默留壳。
+        Remove-Item -LiteralPath $wt -Recurse -Force -ErrorAction SilentlyContinue
+        if (Test-Path -LiteralPath $wt) {
+          Write-Output "警告: $wt 被其他进程占用（通常是终端或编辑器停在该目录），未能删净；关闭后手动删除该目录"
+        }
+      }
     }
     git worktree prune
   }
@@ -108,7 +118,7 @@ function piw-clean {
       }
     }
   }
-  Write-Output "已清理 worktree，当前位于主仓库: $main"
+  Write-Output "清理流程结束，当前位于主仓库: $main"
 }
 ```
 
@@ -141,6 +151,9 @@ if (-not ($b.Length -ge 3 -and $b[0] -eq 0xEF -and $b[1] -eq 0xBB -and $b[2] -eq
 - 删分支判据与 POSIX 版一致：先 `git cherry` 比 patch-id，再退一步用 `git apply --check --reverse` 看内容；两条都不成立才保留分支并说明。
 - 失败路径打印中文提示后直接 `return`。PowerShell 函数没有退出码（POSIX 版在这些路径返回 1）；写成 `return 1` 会把 `1` 混进输出流。
 - worktree 有未提交改动时强制删除，改动会丢失；`piw-clean` 会先警告再删。
+  - 目录被其他进程占用（终端/编辑器停在该目录）时，`git worktree remove --force` 会删光内容但
+  删不掉目录本身，`prune` 之后只剩一个空壳目录。函数会用 PowerShell 再补删一次，仍失败则明确
+  警告让用户手动处理，不静默留壳。
 
 ## Windows Terminal：Ctrl+Shift+T 复制当前标签（继承 cwd）
 
