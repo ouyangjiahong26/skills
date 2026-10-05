@@ -1,8 +1,8 @@
 # 写 Agent Brief
 
-agent brief 是 GitHub issue 或 PR 进入 `ready-for-agent` 时发布的一条结构化评论。它是 AFK agent 工作的权威规格。原始正文和讨论只是上下文，agent brief 才是契约。
+agent brief 是 GitHub issue 或 PR 进入 `ready-for-agent` 时发布的一条结构化评论。它是 AFK agent 工作的权威任务要求。原始正文和讨论只是上下文，agent brief 才是契约。
 
-brief 说清 **agent 应该做什么**，这一点延伸到两个入口：对 issue，是从零构建这个改动；对 PR，是_对现有 diff_ 还要做什么：收尾、补缺口、回应评审意见。两边原则相同；下面的 PR 例子展示了差别。
+brief 说清 agent 应该做什么，这一点延伸到两个入口：对 issue，是从零构建这个改动。对 PR，是_对现有 diff_ 还要做什么：收尾、补缺口、回应评审意见。两边原则相同。下面的 PR 例子展示了差别。
 
 ## 原则
 
@@ -10,27 +10,27 @@ brief 说清 **agent 应该做什么**，这一点延伸到两个入口：对 is
 
 issue 可能在 `ready-for-agent` 待上几天甚至几周。这期间代码库会变。brief 要写得即使文件被改名、移动、重构，依然有用。
 
-- **要**描述接口、类型、行为契约
-- **要**点名 agent 应查找或修改的具体类型、函数签名、配置形状
-- **不要**引用文件路径：会过时
-- **不要**引用行号
-- **不要**假设当前实现结构会保持不变
+- 要描述接口、类型、行为契约
+- 要点名 agent 应查找或修改的具体类型、函数签名、配置形状
+- 不要引用文件路径：会过时
+- 不要引用行号
+- 不要假设当前实现结构会保持不变
 
 ### 行为的，不是过程的
 
-描述系统**应该做什么**，不是**怎么实现**。agent 会重新探索代码库，自己决定实现。
+描述系统应该做什么，不是怎么实现。agent 会重新探索代码库，自己决定实现。
 
-- **好：** "`SkillConfig` 类型应接受一个可选的 `schedule` 字段，类型为 `CronExpression`"
-- **坏：** "打开 src/types/skill.ts，在第 42 行加一个 schedule 字段"
-- **好：** "用户无参数运行 `/triage` 时，应看到待处理 issue 的摘要"
-- **坏：** "在主 handler 函数里加一个 switch 语句"
+- 好： “`SkillConfig` 类型应接受一个可选的 `schedule` 字段，类型为 `CronExpression`”
+- 坏： “打开 src/types/skill.ts，在第 42 行加一个 schedule 字段”
+- 好： “用户无参数运行 `/triage` 时，应看到待处理 issue 的摘要”
+- 坏： “在主 handler 函数里加一个 switch 语句”
 
 ### 完整的验收标准
 
 agent 需要知道什么时候算完。每份 agent brief 必须有具体、可测的验收标准，每条都能独立验证。
 
-- **好：** "运行 `gh issue list --label needs-triage` 返回经过初步分类的 issue"
-- **坏：** "分诊应正常工作"
+- 好： “运行 `gh issue list --label needs-triage` 返回经过初步分类的 issue”
+- 坏： “分诊应正常工作”
 
 ### 明确的范围边界
 
@@ -38,12 +38,15 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 
 ## 模板
 
-下面是 brief 的正文结构，前面冠上 AI 贡献标记再发布：
+下面是 brief 的正文结构，前面冠上 AI 贡献标记再发布。开头写明执行环境：brief 是给一个具体环境里的 AFK agent 执行的，写明 harness 与模型，认领者才能跑出可比的结果。维护者没有指定时，先问再写，不猜测：
 
 ```markdown
 > **[AI Generated]** 本评论由 AI 完成。
 
 ## Agent Brief
+
+**Harness:** <认领 agent 使用的 harness，如 Oh My Pi>
+**Model:** <运行 agent 的模型>
 
 **Category:** bug / enhancement
 **Summary:** 一句话描述要做什么
@@ -76,6 +79,9 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 ```markdown
 ## Agent Brief
 
+**Harness:** Claude Code
+**Model:** glm-5.3
+
 **Category:** bug
 **Summary:** Skill description 截断在词中间，产生残缺输出
 
@@ -106,6 +112,9 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 
 ```markdown
 ## Agent Brief
+
+**Harness:** Claude Code
+**Model:** glm-5.3
 
 **Category:** enhancement
 **Summary:** 增加 `.out-of-scope/` 目录，用于记录被拒的功能请求
@@ -139,10 +148,13 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 
 ### 好的 agent brief（PR）
 
-PR 的 "Current behavior" 描述 diff 的状态，brief 要求 agent 收尾或修复，而非从零构建。
+PR 的 “Current behavior” 描述 diff 的状态，brief 要求 agent 收尾或修复，而非从零构建。
 
 ```markdown
 ## Agent Brief
+
+**Harness:** Claude Code
+**Model:** glm-5.3
 
 **Category:** enhancement
 **Summary:** 完成贡献者为 `triage list` 加的 `--json` 输出标志
@@ -190,7 +202,7 @@ The function around line 150 has the issue.
 
 坏在哪里：
 - 没有分类
-- 描述含糊（"the triage thing is broken"）
+- 描述含糊（“the triage thing is broken”）
 - 引用了会过时的文件路径和行号
 - 没有验收标准
 - 没有范围边界

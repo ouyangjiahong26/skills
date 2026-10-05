@@ -11,8 +11,8 @@ disable-model-invocation: true
 
 ## 规则
 
-- Project Status 是工作状态；label 只表达分类、领域或分诊角色。
-- Issue 与 PR 都应加入 Project；同一编号可能对应 Issue 或 PR，先用 `gh pr view <n>` 确认，失败再用 `gh issue view <n>`。
+- Project Status 是工作状态。label 只表达分类、领域或分诊角色。
+- Issue 与 PR 都应加入 Project。同一编号可能对应 Issue 或 PR，先用 `gh pr view <n>` 确认，失败再用 `gh issue view <n>`。
 - 所有写操作前先读取 Project item，避免重复添加或覆盖未知字段。
 - 只在迁到 `Done`（原因 `Completed`）或 `No action`（原因 `Not planned`）时关闭 Issue，其他迁移不关闭。`Done` 只用于 PR 已合并且行为已验证的工作。
 - PR 关闭但未合并时，不自动设为 `No action`。
