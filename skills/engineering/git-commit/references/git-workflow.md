@@ -10,9 +10,9 @@
 <type>(<scope>): <description>
 ```
 
-- `scope` 可选；涉及具体 skill 或模块时加上，例如 `(git-commit)`、`(open-pr)`。
+- `scope` 可选。涉及具体 skill 或模块时加上，例如 `(git-commit)`、`(open-pr)`。
 - `description` 用中文，句末不加句号。
-- 标题尽量一行；需要补充说明时，空一行再写 body。
+- 标题尽量一行。需要补充说明时，空一行再写 body。
 
 ## 类型
 
@@ -35,17 +35,24 @@
 
 ## 分支
 
-默认在功能分支上提交，不在默认分支（`main` / `master`）上直接提交；默认分支只接受合并进来的改动。
+默认在功能分支上提交，不在默认分支（`main` / `master`）上直接提交。默认分支只接受合并进来的改动。
 
 - 从最新的默认分支切出：`git switch <默认分支> && git pull && git switch -c <branch>`。
 - 分支名 `<type>/<slug>`，`type` 与 commit 类型同词汇，`slug` 用小写英文与连字符：
   - `docs/ai-contribution`
   - `chore/repo-polish`
   - `fix/issue-40-filter-delete`
-- 一个分支对应一个关注点；同一分支上的多个 commit 各自独立成篇（见拆分原则）。
-- 已经在默认分支上提交、且尚未推送时，用 `git switch -c <branch>` 把提交带到新分支；已推送的公共历史不要改写。
-- 提交后由 `/open-pr` 推送分支并开 PR，由 `/merge-pr` 合并与清理；提交环节不推送、不合并。
+- 一个分支对应一个关注点。同一分支上的多个 commit 各自独立成篇（见拆分原则）。
+- 已经在默认分支上提交、且尚未推送时，用 `git switch -c <branch>` 把提交带到新分支。已推送的公共历史不要改写。
+- 提交后由 `/open-pr` 推送分支并开 PR，由 `/merge-pr` 合并与清理。提交环节不推送、不合并。
 
 ## 拆分原则
 
 一个 commit 只包含一个独立关注点。若改动跨越多个模块或意图，拆成多个 commit，各自拟定 message。
+
+拆分步骤：
+
+1. 按意图分组：把改动按功能、修复、文档、配置归组，每组一个 commit。新增测试与其对应的实现同组。
+2. 同一文件含多个关注点时，用 `git add -p` 按 hunk 分批暂存，逐 commit 提交。
+3. 按依赖顺序提交：被依赖的组（公共类型、工具函数）在前，依赖它的组在后，保证每个 commit 单独 checkout 都能构建。
+4. 分组方案（文件清单与各组 message）先交给用户确认，再逐组执行。

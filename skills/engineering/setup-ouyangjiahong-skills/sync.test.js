@@ -31,7 +31,7 @@ function makeMockSkillDir(base) {
   fs.writeFileSync(
     path.join(referencesDir, 'standards.md'),
     [
-      '# 注入规范原文',
+      '# 注入标准原文',
       '',
       '## 写作要求',
       '',
@@ -80,30 +80,16 @@ test('默认只同步 AGENTS.md，不创建 CLAUDE.md', (t) => {
   assert.ok(!fs.existsSync(path.join(targetDir, 'CLAUDE.md')), '默认不应创建 CLAUDE.md');
 });
 
-test('--file CLAUDE.md 只同步 CLAUDE.md', (t) => {
+test('--file 已移除：报错且不写目标文件', (t) => {
   const base = makeTempDir(t);
   const skillDir = makeMockSkillDir(base);
   const targetDir = path.join(base, 'target');
   fs.mkdirSync(targetDir, { recursive: true });
 
   const result = runSync([targetDir, '--file', 'CLAUDE.md'], { SKILL_DIR: skillDir });
-  assert.strictEqual(result.status, 0, `脚本应退出码 0，实际 ${result.status}；stderr=${result.stderr}`);
-
-  assertTargetFile(targetDir, 'CLAUDE.md');
-  assert.ok(!fs.existsSync(path.join(targetDir, 'AGENTS.md')), '不应创建 AGENTS.md');
-});
-
-test('--file 无效值时报错且不写目标文件', (t) => {
-  const base = makeTempDir(t);
-  const skillDir = makeMockSkillDir(base);
-  const targetDir = path.join(base, 'target');
-  fs.mkdirSync(targetDir, { recursive: true });
-
-  const result = runSync([targetDir, '--file', 'README.md'], { SKILL_DIR: skillDir });
   assert.notStrictEqual(result.status, 0, `应非零退出，实际 ${result.status}`);
-  assert.match(result.stderr, /--file/, `stderr 应指出 --file 问题；实际：${result.stderr}`);
+  assert.match(result.stderr, /无法识别的参数/, `stderr 应指出参数问题；实际：${result.stderr}`);
   assert.ok(!fs.existsSync(path.join(targetDir, 'AGENTS.md')), '失败时不应创建 AGENTS.md');
-  assert.ok(!fs.existsSync(path.join(targetDir, 'CLAUDE.md')), '失败时不应创建 CLAUDE.md');
 });
 
 test('替换同名节并保留自定义内容', (t) => {
@@ -112,11 +98,11 @@ test('替换同名节并保留自定义内容', (t) => {
   const targetDir = path.join(base, 'target');
   fs.mkdirSync(targetDir, { recursive: true });
 
-  const claudeFile = path.join(targetDir, 'CLAUDE.md');
+  const targetFile = path.join(targetDir, 'AGENTS.md');
   fs.writeFileSync(
-    claudeFile,
+    targetFile,
     [
-      '# CLAUDE.md',
+      '# AGENTS.md',
       '',
       '## 写作要求',
       '',
@@ -130,10 +116,10 @@ test('替换同名节并保留自定义内容', (t) => {
     'utf8'
   );
 
-  const result = runSync([targetDir, '--file', 'CLAUDE.md'], { SKILL_DIR: skillDir });
+  const result = runSync([targetDir], { SKILL_DIR: skillDir });
   assert.strictEqual(result.status, 0, `脚本应退出码 0，实际 ${result.status}；stderr=${result.stderr}`);
 
-  const content = fs.readFileSync(claudeFile, 'utf8');
+  const content = fs.readFileSync(targetFile, 'utf8');
   assert.ok(!content.includes('旧的写作要求内容'), '旧 ## 写作要求 应被替换');
   assert.ok(content.includes('遵守写作原则。'), '新 ## 写作要求 内容应存在');
   assert.ok(content.includes('## 自定义节'), '## 自定义节 标题应被保留');
@@ -147,14 +133,14 @@ test('CRLF 行尾归一化为 LF', (t) => {
   const targetDir = path.join(base, 'target');
   fs.mkdirSync(targetDir, { recursive: true });
 
-  const claudeFile = path.join(targetDir, 'CLAUDE.md');
-  const crlf = '# CLAUDE.md\r\n\r\n## 写作要求\r\n\r\n旧的 CRLF 内容\r\n';
-  fs.writeFileSync(claudeFile, crlf, 'utf8');
+  const targetFile = path.join(targetDir, 'AGENTS.md');
+  const crlf = '# AGENTS.md\r\n\r\n## 写作要求\r\n\r\n旧的 CRLF 内容\r\n';
+  fs.writeFileSync(targetFile, crlf, 'utf8');
 
-  const result = runSync([targetDir, '--file', 'CLAUDE.md'], { SKILL_DIR: skillDir });
+  const result = runSync([targetDir], { SKILL_DIR: skillDir });
   assert.strictEqual(result.status, 0, `脚本应退出码 0，实际 ${result.status}；stderr=${result.stderr}`);
 
-  const buf = fs.readFileSync(claudeFile);
+  const buf = fs.readFileSync(targetFile);
   assert.ok(!buf.includes(0x0d), '目标文件字节流中不应出现 CR (0x0d)');
   const content = buf.toString('utf8');
   assert.ok(content.includes('## 写作要求'), '目标文件仍应包含 ## 写作要求');
@@ -168,15 +154,15 @@ test('幂等：连续运行两次文件内容一致', (t) => {
   const targetDir = path.join(base, 'target');
   fs.mkdirSync(targetDir, { recursive: true });
 
-  const claudeFile = path.join(targetDir, 'CLAUDE.md');
+  const targetFile = path.join(targetDir, 'AGENTS.md');
 
-  const r1 = runSync([targetDir, '--file', 'CLAUDE.md'], { SKILL_DIR: skillDir });
+  const r1 = runSync([targetDir], { SKILL_DIR: skillDir });
   assert.strictEqual(r1.status, 0, `首次运行应成功，实际 ${r1.status}；stderr=${r1.stderr}`);
-  const first = fs.readFileSync(claudeFile, 'utf8');
+  const first = fs.readFileSync(targetFile, 'utf8');
 
-  const r2 = runSync([targetDir, '--file', 'CLAUDE.md'], { SKILL_DIR: skillDir });
+  const r2 = runSync([targetDir], { SKILL_DIR: skillDir });
   assert.strictEqual(r2.status, 0, `再次运行应成功，实际 ${r2.status}；stderr=${r2.stderr}`);
-  const second = fs.readFileSync(claudeFile, 'utf8');
+  const second = fs.readFileSync(targetFile, 'utf8');
 
   assert.strictEqual(second, first, '第二次运行后文件内容应与第一次完全一致');
 
@@ -199,7 +185,6 @@ test('standards.md 缺失时失败并报错到 stderr', (t) => {
 
   // 不应写出目标文件
   assert.ok(!fs.existsSync(path.join(targetDir, 'AGENTS.md')), '失败时不应创建 AGENTS.md');
-  assert.ok(!fs.existsSync(path.join(targetDir, 'CLAUDE.md')), '失败时不应创建 CLAUDE.md');
 });
 
 test('目标目录不存在时失败并报错到 stderr', (t) => {
@@ -218,22 +203,22 @@ test('追加缺失节时保留非空行的末尾空格', (t) => {
   const targetDir = path.join(base, 'target');
   fs.mkdirSync(targetDir, { recursive: true });
 
-  const claudeFile = path.join(targetDir, 'CLAUDE.md');
+  const targetFile = path.join(targetDir, 'AGENTS.md');
   // 自定义内容；最后一行带两个尾随空格，且文件里不含标准两节。
   const beforeContent = [
-    '# CLAUDE.md',
+    '# AGENTS.md',
     '',
     '## 自定义节',
     '',
     '最后一行带两个尾随空格  ', // 行末两个空格
     '',
   ].join('\n');
-  fs.writeFileSync(claudeFile, beforeContent, 'utf8');
+  fs.writeFileSync(targetFile, beforeContent, 'utf8');
 
-  const result = runSync([targetDir, '--file', 'CLAUDE.md'], { SKILL_DIR: skillDir });
+  const result = runSync([targetDir], { SKILL_DIR: skillDir });
   assert.strictEqual(result.status, 0, `脚本应退出码 0；stderr=${result.stderr}`);
 
-  const content = fs.readFileSync(claudeFile, 'utf8');
+  const content = fs.readFileSync(targetFile, 'utf8');
   assert.ok(
     content.includes('最后一行带两个尾随空格  '),
     `自定义末行的两个尾随空格应保留：\n${content}`

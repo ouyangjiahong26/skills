@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 'use strict';
 
-// sync.js：把 references/standards.md 两节注入目标仓库的 AGENTS.md / CLAUDE.md。
+// sync.js：把 references/standards.md 两节注入目标仓库的 AGENTS.md。
 //
-// 用法: node sync.js [目标仓库根目录] [--file AGENTS.md|CLAUDE.md]
-//   不传目录默认 process.cwd()；--file 缺省 AGENTS.md。
+// 用法: node sync.js [目标仓库根目录]
+//   不传目录默认 process.cwd()。
 //
 // 仅依赖 Node 标准库（fs / path），跨 Windows / macOS / Linux。
 
@@ -12,8 +12,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const SECTION_TITLES = ['写作要求', '编码准则'];
-// --file 参数值（大写化后）→ 目标文件名，兼做合法值校验。
-const FILE_MAP = { 'AGENTS.MD': 'AGENTS.md', 'CLAUDE.MD': 'CLAUDE.md' };
+const TARGET_FILE = 'AGENTS.md';
 
 // ---- 输出 ----
 
@@ -143,24 +142,11 @@ function ensureH1(content, expected) {
 
 // ---- 参数解析 ----
 
-// 解析命令行参数：第一个位置参数是目标目录；--file / -f 指定目标文件
-// （AGENTS.md / CLAUDE.md，大小写不敏感），缺省 AGENTS.md。
+// 解析命令行参数：第一个位置参数是目标目录，缺省 process.cwd()。
 function parseArgs(argv) {
-  const parsed = { targetDir: undefined, file: 'AGENTS.md' };
-  for (let i = 0; i < argv.length; i++) {
-    const arg = argv[i];
-    if (arg === '--file' || arg === '-f') {
-      const value = argv[i + 1];
-      if (!value || value.startsWith('-')) {
-        die('--file 需要一个参数值: AGENTS.md / CLAUDE.md');
-      }
-      const key = value.toUpperCase();
-      if (!(key in FILE_MAP)) {
-        die(`无效的 --file 值 "${value}"，可选 AGENTS.md / CLAUDE.md`);
-      }
-      parsed.file = FILE_MAP[key];
-      i++;
-    } else if (parsed.targetDir === undefined) {
+  const parsed = { targetDir: undefined };
+  for (const arg of argv) {
+    if (parsed.targetDir === undefined) {
       parsed.targetDir = arg;
     } else {
       die(`无法识别的参数: ${arg}`);
@@ -175,7 +161,7 @@ function run() {
   const skillDir = process.env.SKILL_DIR || path.dirname(__filename);
   const parsed = parseArgs(process.argv.slice(2));
   const targetDir = parsed.targetDir || process.cwd();
-  const targetFiles = [parsed.file];
+  const targetFiles = [TARGET_FILE];
   const standardsPath = path.join(skillDir, 'references', 'standards.md');
 
   // standards.md 必须存在且是普通文件。
@@ -225,7 +211,7 @@ function run() {
 
     const before = content;
     content = ensureH1(content, `# ${name}`);
-    if (before !== content) log(`    H1 标题 → # ${name}`);
+    if (before !== content) log(`    H1 标题设为 # ${name}`);
 
     writeLF(filePath, content);
   }

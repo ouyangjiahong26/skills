@@ -42,8 +42,8 @@ audit_repo() {
     echo "## $full"
     echo "| 检查 | 结果 | 说明 |"
     echo "|---|---|---|"
-    echo "| 仓库 | ⛔ | 不存在或不可访问(404) |"
-    echo "汇总:$full:⛔ 无法访问"
+    echo "| 仓库 | 失败 | 不存在或不可访问(404) |"
+    echo "汇总:$full:失败 无法访问"
     return 2
   fi
 
@@ -59,7 +59,7 @@ audit_repo() {
   echo "|---|---|---|"
 
   if [ "$fork" = true ] || [ "$archived" = true ]; then
-    echo "| fork/archived | ⏭️ | $([ "$fork" = true ] && echo fork)$([ "$archived" = true ] && echo archived),跳过 |"
+    echo "| fork/archived | 跳过 | $([ "$fork" = true ] && echo fork)$([ "$archived" = true ] && echo archived),跳过 |"
     echo "汇总:$full:跳过(fork/archived)"
     return 0
   fi
@@ -68,10 +68,10 @@ audit_repo() {
   local red="" yel="" wht=""
   mark() { # level id desc
     case "$1" in
-      red) red="$red $2"; r=$((r+1)); echo "| $2 | 🔴 | $3 |" ;;
-      yel) yel="$yel $2"; y=$((y+1)); echo "| $2 | 🟡 | $3 |" ;;
-      wht) wht="$wht $2"; w=$((w+1)); echo "| $2 | ⚪ | $3 |" ;;
-      ok)  echo "| $2 | ✅ | $3 |" ;;
+      red) red="$red $2"; r=$((r+1)); echo "| $2 | 严重 | $3 |" ;;
+      yel) yel="$yel $2"; y=$((y+1)); echo "| $2 | 建议 | $3 |" ;;
+      wht) wht="$wht $2"; w=$((w+1)); echo "| $2 | 信息 | $3 |" ;;
+      ok)  echo "| $2 | 通过 | $3 |" ;;
     esac
   }
 
@@ -86,7 +86,7 @@ audit_repo() {
     has "$m" && is_code=1
   done
 
-  # license(代码仓缺为 🔴,非代码仓为信息项)
+  # license(代码仓缺为严重,非代码仓为信息项)
   if [ -z "$license" ]; then
     if [ $is_code = 1 ]; then mark red license "repo.license 为 null"; else mark wht license "非代码仓,无 LICENSE(信息项)"; fi
   else mark ok license "$license"; fi

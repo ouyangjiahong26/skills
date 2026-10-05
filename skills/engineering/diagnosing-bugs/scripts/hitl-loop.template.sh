@@ -7,8 +7,8 @@
 #   bash hitl-loop.template.sh
 #
 # 两个辅助函数：
-#   step "<指令>"         → 显示指令，等回车
-#   capture VAR "<问题>"  → 显示问题，把回答读进 VAR
+#   step "<指令>"         ：显示指令，等回车
+#   capture VAR "<问题>"  ：显示问题，把回答读进 VAR
 #
 # 跑完后，抓到的值以 KEY=VALUE 形式打印出来，供 agent 解析。
 #

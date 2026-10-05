@@ -4,14 +4,18 @@
       "name": "Engineering",
       "skills": [
         "./skills/engineering/code-review",
+        "./skills/engineering/codebase-design",
         "./skills/engineering/diagnosing-bugs",
         "./skills/engineering/domain-modeling",
         "./skills/engineering/git-commit",
         "./skills/engineering/github-governance",
         "./skills/engineering/grill-with-docs",
+        "./skills/engineering/performance-optimization",
+        "./skills/engineering/refactoring",
         "./skills/engineering/resolving-merge-conflicts",
         "./skills/engineering/setup-ouyangjiahong-skills",
         "./skills/engineering/setup-pi",
+        "./skills/engineering/tdd",
         "./skills/engineering/triage"
       ]
     },

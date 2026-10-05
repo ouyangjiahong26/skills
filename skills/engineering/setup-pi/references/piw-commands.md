@@ -1,6 +1,6 @@
 # piw / piw-clean 命令（POSIX shell 函数）
 
-用于 POSIX shell 的 bash / zsh，含 Windows 上从 git-bash / MSYS 使用 `pi` 的场景：写入 `~/.bashrc`（或 `~/.zshrc` 等等效 rc 文件）的**非交互 guard 之前**，这样非交互加载时也能定义。Windows 上从 PowerShell 使用 `pi` 时用 PowerShell 模板 [piw-commands-windows.md](./piw-commands-windows.md)，两个文件互不覆盖。
+用于 POSIX shell 的 bash / zsh，含 Windows 上从 git-bash / MSYS 使用 `pi` 的场景：写入 `~/.bashrc`（或 `~/.zshrc` 等等效 rc 文件）的非交互 guard 之前，这样非交互加载时也能定义。Windows 上从 PowerShell 使用 `pi` 时用 PowerShell 模板 [piw-commands-windows.md](./piw-commands-windows.md)，两个文件互不覆盖。
 
 ```bash
 # piw: 新建分支+worktree 并直接进入 pi
@@ -85,14 +85,14 @@ piw-clean() {
 
 ## 注意
 
-- 目录约定：worktree 放在主仓库**父目录**下的 `pi-<分支名>`（`/` 转 `-`）。
-- `piw-clean` 必须能定位主仓库（`git worktree list` 第一条）；不在仓库内会报错返回 1。
+- 目录约定：worktree 放在主仓库父目录下的 `pi-<分支名>`（`/` 转 `-`）。
+- `piw-clean` 必须能定位主仓库（`git worktree list` 第一条）。不在仓库内会报错返回 1。
 - 删分支的判据不是 `git branch -d` 的祖先关系（squash / rebase 合并重写 SHA，内容已进 base 也会被判“未合并”，留下分支），而是两步：
-  1. `git cherry <主仓库当前分支> <分支>` 逐个 patch-id 比对，出现 `+` 行说明该提交的补丁在 base 中找不到；
-  2. 全部是 `-` / 空时直接删；出现 `+` 时再退一步看内容——把分支相对 `merge-base` 的改动反向应用到 base 上（`git apply --check --reverse`），能应用说明这些改动已经在 base 里（多提交 squash 合并就属于这种）。
+  1. `git cherry <主仓库当前分支> <分支>` 逐个 patch-id 比对，出现 `+` 行说明该提交的补丁在 base 中找不到。
+  2. 全部是 `-` / 空时直接删。出现 `+` 时再退一步看内容：把分支相对 `merge-base` 的改动反向应用到 base 上（`git apply --check --reverse`），能应用说明这些改动已经在 base 里（多提交 squash 合并就属于这种）。
   两条都不成立才保留分支并说明。
-- worktree 有未提交改动时强制删除，改动会丢失；`piw-clean` 会先警告再删。
+- worktree 有未提交改动时强制删除，改动会丢失。`piw-clean` 会先警告再删。
   - `git worktree remove --force` 失败时（目录被占用、权限不足、worktree 被 lock），git 可能已删光
   内容并注销该 worktree 却删不掉目录本身（Windows 上终端/编辑器停在目录里时如此），留下一个未注册
-  的空目录；被 lock 或注册残留时 git 直接拒绝，目录内容原封不动。函数会再补一次 `rmdir`（只删空
+  的空目录。被 lock 或注册残留时 git 直接拒绝，目录内容原封不动。函数会再补一次 `rmdir`（只删空
   目录，不会碰 git 特意保全的内容），仍失败则明确警告让用户手动处理，不静默留壳。
