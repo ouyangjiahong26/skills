@@ -43,7 +43,16 @@ piw-clean() {
   cd "$main" || return 1               # 先离开待删目录，否则 cwd 会随 worktree 一起消失
   if [ -n "$wt" ]; then
     git worktree remove "$wt" 2>/dev/null \
-      || { echo "worktree $wt 有未提交改动，强制删除（改动将丢失）"; git worktree remove --force "$wt"; }
+      || { # 失败可能是未提交改动、目录被占用、权限不足或 worktree 被 lock，git 不作区分；
+           # 被占用时 --force 会删光内容并注销该 worktree，但删不掉目录本身，留下一个未注册的空目录；
+           # 被 lock 或注册残留时 git 直接拒绝，目录内容原封不动。故补一次 rmdir（只删空目录，
+           # 不碰 git 拒绝删除的内容）并明说
+           echo "worktree $wt 未干净或被占用，强制删除（未提交改动将丢失）"
+           git worktree remove --force "$wt"
+           if [ -d "$wt" ]; then
+             rmdir "$wt" 2>/dev/null \
+               || echo "警告: $wt 未能删净（可能仍被占用、权限不足或 worktree 被 lock）；确认无用后手动删除该目录"
+           fi; }
     git worktree prune
   fi
   # 删分支。git branch -d 只看 tip 是否为 base 的祖先，squash / rebase 合并重写 SHA 后会误判
@@ -64,7 +73,7 @@ piw-clean() {
   else
     echo "分支 '$branch' 有未合并进 $target 的改动，已保留"
   fi
-  echo "已清理 worktree，当前位于主仓库: $main"
+  echo "清理流程结束，当前位于主仓库: $main"
 }
 ```
 
@@ -83,3 +92,7 @@ piw-clean() {
   2. 全部是 `-` / 空时直接删；出现 `+` 时再退一步看内容——把分支相对 `merge-base` 的改动反向应用到 base 上（`git apply --check --reverse`），能应用说明这些改动已经在 base 里（多提交 squash 合并就属于这种）。
   两条都不成立才保留分支并说明。
 - worktree 有未提交改动时强制删除，改动会丢失；`piw-clean` 会先警告再删。
+  - `git worktree remove --force` 失败时（目录被占用、权限不足、worktree 被 lock），git 可能已删光
+  内容并注销该 worktree 却删不掉目录本身（Windows 上终端/编辑器停在目录里时如此），留下一个未注册
+  的空目录；被 lock 或注册残留时 git 直接拒绝，目录内容原封不动。函数会再补一次 `rmdir`（只删空
+  目录，不会碰 git 特意保全的内容），仍失败则明确警告让用户手动处理，不静默留壳。
