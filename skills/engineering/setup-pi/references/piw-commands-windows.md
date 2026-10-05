@@ -69,14 +69,15 @@ function piw-clean {
     git worktree remove $wt 2>$null
     if ($LASTEXITCODE -ne 0) {
       # 失败可能是未提交改动、目录被占用、权限不足或 worktree 被 lock，git 不作区分；一律走 --force：
-      # --force 会删光内容并注销该 worktree，但可能删不掉目录本身，留下一个未注册的空目录，下面再兜底。
+      # 目录被占用（Windows 下终端/编辑器停在目录里）时，--force 会删光内容并注销该 worktree，但删不掉
+      # 目录本身，留下一个未注册的空目录；worktree 被 lock 或注册残留时 git 直接拒绝，目录内容原封不动。
       Write-Output "worktree $wt 未干净或被占用，强制删除（未提交改动将丢失）"
       git worktree remove --force $wt 2>$null
-      if ($LASTEXITCODE -ne 0 -and (Test-Path -LiteralPath $wt)) {
-        # 只在目录已空时补删：git 拒绝删除时，目录里可能还有它特意保全的内容（worktree 被 lock、或
-        # 注册残留指向与 worktree 无关的目录），带 -Recurse 的删除会绕过这层保护，故与 POSIX 版的
-        # rmdir 一致用非递归删除；删不掉就明确警告，不静默留壳。
-        Remove-Item -LiteralPath $wt -Force -ErrorAction SilentlyContinue
+      if ($LASTEXITCODE -ne 0 -and (Test-Path -LiteralPath $wt -PathType Container)) {
+        # 补删只对空目录有效：Directory::Delete 非递归，非空即抛错（由下面的 Test-Path 警告接管），
+        # 与 POSIX 版的 rmdir 等价。不用 Remove-Item：它对非空目录会弹「缺 -Recurse，继续将连子项一起
+        # 删」的确认，默认同意就递归删光，正好删掉 git 拒绝删除时目录里保留下来的内容。
+        try { [System.IO.Directory]::Delete($wt) } catch { }
         if (Test-Path -LiteralPath $wt) {
           Write-Output "警告: $wt 未能删净（可能仍被占用、权限不足或 worktree 被 lock）；确认无用后手动删除该目录"
         }
@@ -152,10 +153,11 @@ if (-not ($b.Length -ge 3 -and $b[0] -eq 0xEF -and $b[1] -eq 0xBB -and $b[2] -eq
 - 删分支判据与 POSIX 版一致：先 `git cherry` 比 patch-id，再退一步用 `git apply --check --reverse` 看内容；两条都不成立才保留分支并说明。
 - 失败路径打印中文提示后直接 `return`。PowerShell 函数没有退出码（POSIX 版在这些路径返回 1）；写成 `return 1` 会把 `1` 混进输出流。
 - worktree 有未提交改动时强制删除，改动会丢失；`piw-clean` 会先警告再删。
-  - `git worktree remove --force` 失败时（目录被占用、权限不足、worktree 被 lock），git 会删光
-  内容并注销该 worktree，但可能删不掉目录本身，留下一个未注册的空目录。函数会用 PowerShell 再
-  补删一次（非递归，只删空目录，不会碰 git 特意保全的内容），仍失败则明确警告让用户手动处理，
-  不静默留壳。
+  - `git worktree remove --force` 失败时（目录被占用、权限不足、worktree 被 lock），git 可能已删光
+  内容并注销该 worktree 却删不掉目录本身，留下一个未注册的空目录；被 lock 或注册残留时 git 直接
+  拒绝，目录内容原封不动。函数会再补一次非递归删除（`[System.IO.Directory]::Delete`，只删空目录，
+  不会碰 git 特意保全的内容，也不会弹 `Remove-Item` 对非空目录的递归确认），仍失败则明确警告让
+  用户手动处理，不静默留壳。
 
 ## Windows Terminal：Ctrl+Shift+T 复制当前标签（继承 cwd）
 
