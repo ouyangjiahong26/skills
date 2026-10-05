@@ -43,13 +43,14 @@ piw-clean() {
   cd "$main" || return 1               # 先离开待删目录，否则 cwd 会随 worktree 一起消失
   if [ -n "$wt" ]; then
     git worktree remove "$wt" 2>/dev/null \
-      || { # 失败可能是未提交改动，也可能是目录被其他进程占用（Windows 下的终端/编辑器）；
-           # --force 会删光内容但删不掉被占用的目录，prune 后只剩空壳，故补一次 rmdir 并明说
+      || { # 失败可能是未提交改动、目录被占用、权限不足或 worktree 被 lock，git 不作区分；
+           # --force 会删光内容并注销该 worktree，但可能删不掉目录本身，留下一个未注册的空目录，
+           # 故补一次 rmdir（只删空目录，不碰 git 拒绝删除的内容）并明说
            echo "worktree $wt 未干净或被占用，强制删除（未提交改动将丢失）"
            git worktree remove --force "$wt"
            if [ -d "$wt" ]; then
              rmdir "$wt" 2>/dev/null \
-               || echo "警告: $wt 被其他进程占用（通常是终端或编辑器停在该目录），未能删净；关闭后手动删除该目录"
+               || echo "警告: $wt 未能删净（可能仍被占用、权限不足或 worktree 被 lock）；确认无用后手动删除该目录"
            fi; }
     git worktree prune
   fi
@@ -90,6 +91,6 @@ piw-clean() {
   2. 全部是 `-` / 空时直接删；出现 `+` 时再退一步看内容——把分支相对 `merge-base` 的改动反向应用到 base 上（`git apply --check --reverse`），能应用说明这些改动已经在 base 里（多提交 squash 合并就属于这种）。
   两条都不成立才保留分支并说明。
 - worktree 有未提交改动时强制删除，改动会丢失；`piw-clean` 会先警告再删。
-  - 目录被其他进程占用（Windows 下的终端/编辑器停在该目录）时，`git worktree remove --force`
-  会删光内容但删不掉目录本身，`prune` 之后只剩一个空壳目录。函数会再补一次 `rmdir`，仍失败则
-  明确警告让用户手动处理，不静默留壳。
+  - `git worktree remove --force` 失败时（目录被占用、权限不足、worktree 被 lock），git 会删光
+  内容并注销该 worktree，但可能删不掉目录本身，留下一个未注册的空目录。函数会再补一次 `rmdir`
+  （只删空目录，不会碰 git 特意保全的内容），仍失败则明确警告让用户手动处理，不静默留壳。
