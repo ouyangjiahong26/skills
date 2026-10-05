@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-// sync.js：把 references/standards.md 三节注入目标仓库的 AGENTS.md / CLAUDE.md。
+// sync.js：把 references/standards.md 两节注入目标仓库的 AGENTS.md / CLAUDE.md。
 //
 // 用法: node sync.js [目标仓库根目录] [--file AGENTS.md|CLAUDE.md]
 //   不传目录默认 process.cwd()；--file 缺省 AGENTS.md。
@@ -11,7 +11,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const SECTION_TITLES = ['交流语言', '写作要求', '编码准则'];
+const SECTION_TITLES = ['写作要求', '编码准则'];
 // --file 参数值（大写化后）→ 目标文件名，兼做合法值校验。
 const FILE_MAP = { 'AGENTS.MD': 'AGENTS.md', 'CLAUDE.MD': 'CLAUDE.md' };
 
@@ -199,7 +199,7 @@ function run() {
   log('==> 归一化源文件行尾 (LF)');
   writeLF(standardsPath, readLF(standardsPath));
 
-  log('==> 抽取三节原文');
+  log('==> 抽取两节原文');
   const standardsContent = readLF(standardsPath);
   const sourceSections = {};
   for (const title of SECTION_TITLES) {
@@ -212,10 +212,10 @@ function run() {
   for (const name of targetFiles) {
     const filePath = path.join(targetDir, name);
     if (!fs.existsSync(filePath)) {
-      log(`==> ${name}: 不存在，创建并注入三节`);
+      log(`==> ${name}: 不存在，创建并注入两节`);
       fs.writeFileSync(filePath, '');
     } else {
-      log(`==> ${name}: 已存在，替换/追加三节`);
+      log(`==> ${name}: 已存在，替换/追加两节`);
     }
 
     let content = readLF(filePath);
