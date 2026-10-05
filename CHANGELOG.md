@@ -9,11 +9,11 @@
 
 ### 新增
 
-- `github-repo-audit` 与 `github-gov-fix`：仓库体检，以及按体检结论批量补齐治理文件。
+- `github-governance`：仓库治理的审计与修复合一，`github-repo-audit` 与 `github-gov-fix` 合并为单条入口。
 - `setup-pi`：pi harness 的引导流程；`piw` / `piw-clean` 提供 POSIX 与 Windows PowerShell 两版。
 - `merge-pr`：自 `open-pr` 拆出的预检、合并与清理；`open-pr` 只留推送、建 PR 与评审。
 - `github-project`：GitHub Project 的状态迁移，`triage`、`open-pr`、`merge-pr` 接入。
-- 对齐上游 [mattpocock/skills](https://github.com/mattpocock/skills) 的工程技能：`code-review`、`triage`、`tdd`、`implement`、`diagnosing-bugs`、`codebase-design`、`resolving-merge-conflicts`、`to-spec`、`implement-spec` 等。
+- 对齐上游 [mattpocock/skills](https://github.com/mattpocock/skills) 的工程技能：`code-review`、`triage`、`diagnosing-bugs`、`resolving-merge-conflicts` 等。
 - Node 工具链与测试：`scripts/` 下的技能枚举、链接与检查脚本，`npm test` 聚合运行；仓库 CI 在 PR 上跑 `check-skills.js`。
 
 ### 变更
@@ -28,8 +28,10 @@
 
 ### 移除
 
-- 试验性技能与流程：research 组、Loop 套件、subagent 方案、`setup-claude-code` 等。技能集收敛为 engineering / productivity 两组共 21 个。
+- 试验性技能与流程：research 组、Loop 套件、subagent 方案、`setup-claude-code` 等。技能集收敛为 engineering / productivity 两组。
 - 写作标准的「交流语言」一节，以及 `sync-writing-standards` skill（注入流程并入 `setup-ouyangjiahong-skills`）。
+- `implement`、`implement-spec`、`tdd`、`codebase-design`、`to-spec`：非日常调用的上游实现类技能，连同引用它们的 README 日常流程与 AI 标记清单一并清理。
+- `github-repo-audit` 与 `github-gov-fix` 合并为 `github-governance`，不再单列。
 
 ### 修复
 
