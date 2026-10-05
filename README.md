@@ -27,8 +27,8 @@ CLI 读取 `.claude-plugin/marketplace.json`，安装时提示选择分组（Eng
 一条从仓库初始化到 PR 合并的完整路径：
 
 1. 拿到新仓库，先跑 [`/setup-ouyangjiahong-skills`](./skills/engineering/setup-ouyangjiahong-skills/SKILL.md)：把写作要求、编码准则注入 `AGENTS.md`，并配置 issue tracker、分诊标签和领域文档；后续会话自动遵守。
-2. 做事之前讨论计划，配 [`/grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md) 追问打磨，把术语和架构决定写进 `CONTEXT.md` 和 ADR；讨论成熟后用 [`/to-spec`](./skills/engineering/to-spec/SKILL.md) 固化成 issue。
-3. 干活时用 [`/implement`](./skills/engineering/implement/SKILL.md) 或 [`/tdd`](./skills/engineering/tdd/SKILL.md) 推进实现；卡在难调的 bug 上时换 [`/diagnosing-bugs`](./skills/engineering/diagnosing-bugs/SKILL.md)。
+2. 做事之前讨论计划，配 [`/grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md) 追问打磨，把术语和架构决定写进 `CONTEXT.md` 和 ADR。
+3. 推进实现；卡在难调的 bug 上时用 [`/diagnosing-bugs`](./skills/engineering/diagnosing-bugs/SKILL.md)。
 4. 干完活用 [`/code-review`](./skills/engineering/code-review/SKILL.md) 审查改动，[`/git-commit`](./skills/engineering/git-commit/SKILL.md) 提交，[`/open-pr`](./skills/productivity/open-pr/SKILL.md) 开 PR 并评审，[`/merge-pr`](./skills/productivity/merge-pr/SKILL.md) 合并并清理。
 
 ## GitHub 管理
@@ -45,17 +45,11 @@ AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头；AI 写
 | [setup-pi](./skills/engineering/setup-pi/SKILL.md) | 配置 pi 的 piw / piw-clean worktree 命令 | `setup-pi` |
 | [grill-with-docs](./skills/engineering/grill-with-docs/SKILL.md) | 追问打磨计划，同时维护领域文档 | `grill-with-docs` |
 | [domain-modeling](./skills/engineering/domain-modeling/SKILL.md) | 构建和打磨领域模型，维护 `CONTEXT.md` 与 ADR | `domain-modeling` |
-| [codebase-design](./skills/engineering/codebase-design/SKILL.md) | "深模块"共享术语：设计接口、找深化机会、定接口位置 | `codebase-design`、`深模块` |
-| [to-spec](./skills/engineering/to-spec/SKILL.md) | 把当前对话综合成规格，发布到 issue tracker | `to-spec` |
-| [implement](./skills/engineering/implement/SKILL.md) | 基于 spec 或 ticket 执行一段实现，配 TDD 和 code-review | `implement`、`实现` |
-| [implement-spec](./skills/engineering/implement-spec/SKILL.md) | 把规格和工单图在单分支上实现成一个 PR，并行子代理推进 | `implement-spec`、`实现规格` |
-| [tdd](./skills/engineering/tdd/SKILL.md) | 测试驱动开发，红-绿循环 | `tdd`、`TDD`、`red-green` |
 | [code-review](./skills/engineering/code-review/SKILL.md) | 两轴审查 diff：规范（编码准则）与规格（issue/spec） | `code-review`、`review since` |
 | [diagnosing-bugs](./skills/engineering/diagnosing-bugs/SKILL.md) | 难调 bug 和性能回归的诊断流程 | `diagnose`、`debug` |
 | [triage](./skills/engineering/triage/SKILL.md) | 把 issue/PR 推过分诊状态机，产出 agent 可认领的 brief | `triage`、`分诊` |
 | [git-commit](./skills/engineering/git-commit/SKILL.md) | 只提交本会话改动的文件，检查分支归属，确认后提交 | `git-commit`、`提交` |
-| [github-repo-audit](./skills/engineering/github-repo-audit/SKILL.md) | 检查 GitHub 仓库配置完整度,输出分级问题清单 | `repo audit`、`仓库体检` |
-| [github-gov-fix](./skills/engineering/github-gov-fix/SKILL.md) | 按审计结果批量修复仓库治理缺口,文件走 PR、保护走 API | `governance fix`、`修复治理` |
+| [github-governance](./skills/engineering/github-governance/SKILL.md) | 审计仓库治理（治理文件、CI、分支保护、依赖更新）并按清单修复,文件走 PR、保护走 API | `repo audit`、`仓库体检`、`governance fix`、`修复治理` |
 | [resolving-merge-conflicts](./skills/engineering/resolving-merge-conflicts/SKILL.md) | 解决进行中的 git merge/rebase 冲突 | `解决冲突`、`merge conflict` |
 
 ### Productivity
