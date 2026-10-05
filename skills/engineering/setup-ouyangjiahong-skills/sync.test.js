@@ -33,10 +33,6 @@ function makeMockSkillDir(base) {
     [
       '# 注入规范原文',
       '',
-      '## 交流语言',
-      '',
-      '始终使用中文与用户交流。',
-      '',
       '## 写作要求',
       '',
       '遵守写作原则。',
@@ -58,14 +54,14 @@ function runSync(args, env) {
   });
 }
 
-// 断言目标文件存在、H1 正确、含三节、无 CR。
+// 断言目标文件存在、H1 正确、含两节、无 CR。
 function assertTargetFile(targetDir, name) {
   const filePath = path.join(targetDir, name);
   assert.ok(fs.existsSync(filePath), `${name} 应被创建`);
   const content = fs.readFileSync(filePath, 'utf8');
   const firstLine = content.split('\n')[0];
   assert.strictEqual(firstLine, `# ${name}`, `${name} 首行应为 "# ${name}"，实际 "${firstLine}"`);
-  for (const title of ['交流语言', '写作要求', '编码准则']) {
+  for (const title of ['写作要求', '编码准则']) {
     assert.match(content, new RegExp(`## ${title}`), `${name} 应包含 ## ${title}`);
   }
   assert.ok(!content.includes('\r'), `${name} 应无 CR`);
@@ -122,9 +118,9 @@ test('替换同名节并保留自定义内容', (t) => {
     [
       '# CLAUDE.md',
       '',
-      '## 交流语言',
+      '## 写作要求',
       '',
-      '旧的交流语言内容。',
+      '旧的写作要求内容。',
       '',
       '## 自定义节',
       '',
@@ -138,8 +134,8 @@ test('替换同名节并保留自定义内容', (t) => {
   assert.strictEqual(result.status, 0, `脚本应退出码 0，实际 ${result.status}；stderr=${result.stderr}`);
 
   const content = fs.readFileSync(claudeFile, 'utf8');
-  assert.ok(!content.includes('旧的交流语言内容'), '旧 ## 交流语言 应被替换');
-  assert.ok(content.includes('始终使用中文与用户交流'), '新 ## 交流语言 内容应存在');
+  assert.ok(!content.includes('旧的写作要求内容'), '旧 ## 写作要求 应被替换');
+  assert.ok(content.includes('遵守写作原则。'), '新 ## 写作要求 内容应存在');
   assert.ok(content.includes('## 自定义节'), '## 自定义节 标题应被保留');
   assert.ok(content.includes('这是自定义内容'), '自定义节正文应被保留');
   assert.ok(!content.includes('\r'), '输出应无 CR');
@@ -152,7 +148,7 @@ test('CRLF 行尾归一化为 LF', (t) => {
   fs.mkdirSync(targetDir, { recursive: true });
 
   const claudeFile = path.join(targetDir, 'CLAUDE.md');
-  const crlf = '# CLAUDE.md\r\n\r\n## 交流语言\r\n\r\n旧的 CRLF 内容\r\n';
+  const crlf = '# CLAUDE.md\r\n\r\n## 写作要求\r\n\r\n旧的 CRLF 内容\r\n';
   fs.writeFileSync(claudeFile, crlf, 'utf8');
 
   const result = runSync([targetDir, '--file', 'CLAUDE.md'], { SKILL_DIR: skillDir });
@@ -161,9 +157,9 @@ test('CRLF 行尾归一化为 LF', (t) => {
   const buf = fs.readFileSync(claudeFile);
   assert.ok(!buf.includes(0x0d), '目标文件字节流中不应出现 CR (0x0d)');
   const content = buf.toString('utf8');
-  assert.ok(content.includes('## 交流语言'), '目标文件仍应包含 ## 交流语言');
+  assert.ok(content.includes('## 写作要求'), '目标文件仍应包含 ## 写作要求');
   assert.ok(!content.includes('旧的 CRLF 内容'), '旧内容应被替换');
-  assert.ok(content.includes('始终使用中文与用户交流'), '新内容应存在');
+  assert.ok(content.includes('遵守写作原则。'), '新内容应存在');
 });
 
 test('幂等：连续运行两次文件内容一致', (t) => {
@@ -223,7 +219,7 @@ test('追加缺失节时保留非空行的末尾空格', (t) => {
   fs.mkdirSync(targetDir, { recursive: true });
 
   const claudeFile = path.join(targetDir, 'CLAUDE.md');
-  // 自定义内容；最后一行带两个尾随空格，且文件里不含标准三节。
+  // 自定义内容；最后一行带两个尾随空格，且文件里不含标准两节。
   const beforeContent = [
     '# CLAUDE.md',
     '',
@@ -242,8 +238,8 @@ test('追加缺失节时保留非空行的末尾空格', (t) => {
     content.includes('最后一行带两个尾随空格  '),
     `自定义末行的两个尾随空格应保留：\n${content}`
   );
-  // 三节应已追加进来
-  for (const title of ['交流语言', '写作要求', '编码准则']) {
+  // 两节应已追加进来
+  for (const title of ['写作要求', '编码准则']) {
     assert.ok(content.includes(`## ${title}`), `应含 ## ${title}`);
   }
   // 顺手核一下没引入 CR

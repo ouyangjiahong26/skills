@@ -24,10 +24,6 @@ Single-context: read `CONTEXT.md` at the repo root and `docs/adr/` for architect
 
 AI 提交的 issue 和 PR 标题以 `[AI Generated][<类型>]` 开头（类型是大写标签，如 `[FIX]`、`[DOCS]`）；AI 写的评论首行标明“由 AI 完成”还是“AI 辅助完成”。见 `docs/agents/ai-contribution.md`。
 
-## 交流语言
-
-始终使用中文与用户交流。代码、commit message、PR 描述等技术输出也用中文。
-
 ## 写作要求
 
 所有面向人读的文本（注释、CONTEXT.md、ADR、issue 评论、PR 描述、agent brief、triage notes、Sphinx 文档、Agent 回复）应当：
@@ -35,6 +31,7 @@ AI 提交的 issue 和 PR 标题以 `[AI Generated][<类型>]` 开头（类型�
 - 准确、清楚、简洁；先理解材料，再提炼结论。
 - 按逻辑组织，区分相近概念；不用空泛、夸大的修饰语。
 - 面向实际读者，从已知事实推到陌生结论；用分析说服，不装腔或堆砌。
+- 单位用国标：带单位的数值用 GB 3100～3102 的法定计量单位；写单位符号时，数值与符号之间留一个空格（`200 ms`、`5 min`、`64 MB`），不写 `200MS`、`64MB` 这类变体；中文行文里用汉字单位名称（30 秒、5 分钟）同样合规。
 
 ## 编码准则
 

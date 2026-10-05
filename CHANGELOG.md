@@ -22,10 +22,14 @@
 - `sync-writing-standards`：注入改为按 `## 节` 整节替换，`--file` 选择 `AGENTS.md` 或 `CLAUDE.md`；脚本改用 Node 并补单元测试。
 - `open-pr` 与 `merge-pr` 支持 GitHub 栈式 PR：合并前预检可合并性与 CI，确认 `MERGED` 后才删远端分支。
 - 全部 skill 文案按写作要求润色，术语统一。
+- `setup-ouyangjiahong-skills` 合并 `sync-writing-standards` 的注入流程：一个入口先注入写作要求与编码准则，再配置 issue tracker、分诊标签与领域文档。
+- 写作要求新增「单位用国标」一条：带单位的数值用 GB 3100～3102 的法定计量单位。
+- `docs/agents/issue-tracker.md` 的种子模板吸收 issue / PR / 评论的格式约定：提案先行、issue 三段、PR 五段与评论规范。
 
 ### 移除
 
-- 试验性技能与流程：research 组、Loop 套件、subagent 方案、`setup-claude-code` 等。技能集收敛为 engineering / productivity 两组共 22 个。
+- 试验性技能与流程：research 组、Loop 套件、subagent 方案、`setup-claude-code` 等。技能集收敛为 engineering / productivity 两组共 21 个。
+- 写作标准的「交流语言」一节，以及 `sync-writing-standards` skill（注入流程并入 `setup-ouyangjiahong-skills`）。
 
 ### 修复
 
