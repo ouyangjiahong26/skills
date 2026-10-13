@@ -38,15 +38,12 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 
 ## 模板
 
-下面是 brief 的正文结构，前面冠上 AI 贡献标记再发布。开头写明执行环境：brief 是给一个具体环境里的 AFK agent 执行的，写明 harness 与模型，认领者才能跑出可比的结果。维护者没有指定时，先问再写，不猜测：
+下面是 brief 的正文结构，前面冠上 AI 贡献标记再发布：
 
 ```markdown
 > **[AI Generated]** 本评论由 AI 完成。
 
 ## Agent Brief
-
-**Harness:** <认领 agent 使用的 harness，如 Oh My Pi>
-**Model:** <运行 agent 的模型>
 
 **Category:** bug / enhancement
 **Summary:** 一句话描述要做什么
@@ -79,9 +76,6 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 ```markdown
 ## Agent Brief
 
-**Harness:** Claude Code
-**Model:** glm-5.3
-
 **Category:** bug
 **Summary:** Skill description 截断在词中间，产生残缺输出
 
@@ -112,9 +106,6 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 
 ```markdown
 ## Agent Brief
-
-**Harness:** Claude Code
-**Model:** glm-5.3
 
 **Category:** enhancement
 **Summary:** 增加 `.out-of-scope/` 目录，用于记录被拒的功能请求
@@ -152,9 +143,6 @@ PR 的 “Current behavior” 描述 diff 的状态，brief 要求 agent 收尾�
 
 ```markdown
 ## Agent Brief
-
-**Harness:** Claude Code
-**Model:** glm-5.3
 
 **Category:** enhancement
 **Summary:** 完成贡献者为 `triage list` 加的 `--json` 输出标志

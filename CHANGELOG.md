@@ -25,6 +25,7 @@
 - `setup-ouyangjiahong-skills` 合并 `sync-writing-standards` 的注入流程：一个入口先注入写作要求与编码准则，再配置 issue tracker、分诊标签与领域文档。
 - 写作要求新增「单位用国标」一条：带单位的数值用 GB 3100～3102 的法定计量单位。
 - `docs/agents/issue-tracker.md` 的种子模板吸收 issue / PR / 评论的格式约定：提案先行、issue 三段、PR 五段与评论规范。
+- `triage`：agent brief 模板去掉 Harness 与 Model 字段，不再要求写明认领环境，维护者未指定时先问再写的条款一并删除。
 
 ### 移除
 
