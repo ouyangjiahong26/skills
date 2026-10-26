@@ -40,6 +40,8 @@
 - `setup-pi`：`piw-clean` 改按 patch-id 判断分支是否已合并，squash 合并的分支不再残留。worktree 目录被占用或加锁而删不净时不再静默留空壳。
 - `git-commit`：新增分支与 worktree 归属检查，避免提交落到错误分支。
 - `open-pr` / `merge-pr`：worktree 场景不再带 `--delete-branch`（拆分后该逻辑落在 `merge-pr`），避免切分支失败、远端分支删不掉。
+- `issue-tracker` 模板：PR 读取改用 `--json`，外部 PR 作者归属改用 REST API 查询，避免 gh 不支持字段和 Projects classic 报错。
+- `open-pr` 与 `github-governance`：非作者评论补 AI 标记，治理批量兜底标题注明新增 skill 时用 `[FEAT]`。
 
 ## [0.2.0] - 2026-07-13
 

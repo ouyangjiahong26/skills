@@ -49,11 +49,11 @@ PR 作为请求渠道：否。 _（如果本仓库将外部 PR 视为功能请�
 
 设为 `是` 时，PR 与 issue 走相同的标签和状态，使用 `gh pr` 等价命令：
 
-- 读取 PR：`gh pr view <number> --comments`，`gh pr diff <number>` 看 diff。
-- 列出待分诊的外部 PR：`gh pr list --state open --json number,title,body,labels,author,authorAssociation,comments`，只保留 `authorAssociation` 为 `CONTRIBUTOR`、`FIRST_TIME_CONTRIBUTOR` 或 `NONE` 的（去掉 `OWNER`/`MEMBER`/`COLLABORATOR`）。
+- 读取 PR：`gh pr view <number> --json number,title,body,labels,author,comments,state,createdAt`，`gh pr diff <number>` 看 diff。
+- 列出待分诊的外部 PR：`gh pr list --state open --json number,title,body,labels,author,comments`，再对每个 PR 运行 `gh api repos/<owner>/<repo>/pulls/<number> --jq .author_association`，只保留 `CONTRIBUTOR`、`FIRST_TIME_CONTRIBUTOR` 或 `NONE` 的（去掉 `OWNER`/`MEMBER`/`COLLABORATOR`）。
 - 评论 / 打标签 / 关闭：`gh pr comment`、`gh pr edit --add-label`/`--remove-label`、`gh pr close`。
 
-GitHub 的 issue 和 PR 共享编号空间，所以 `#42` 可能是其中任一，用 `gh pr view 42` 确认，回退到 `gh issue view 42`。
+GitHub 的 issue 和 PR 共享编号空间，所以 `#42` 可能是其中任一，用 `gh pr view 42 --json number,state` 确认，回退到 `gh issue view 42 --json number,state`。
 
 ## 当技能说“发布到 issue tracker”时
 
