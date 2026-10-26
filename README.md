@@ -61,7 +61,7 @@ AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头；AI 写
 | Skill | 作用 | 触发词 |
 |---|---|---|
 | [grilling](./skills/productivity/grilling/SKILL.md) | 对计划或设计进行不懈质询（逐轮问完整条前沿） | `grill` |
-| [polish-writing](./skills/productivity/polish-writing/SKILL.md) | 从表达标准、读者理解和专家核查三个角度润色中英文文章、issue 正文及其他书面材料 | `polish-writing`、`润色` |
+| [polish-writing](./skills/productivity/polish-writing/SKILL.md) | 按全文到词语的顺序，从表达标准、读者理解和专家核查三个角度润色中英文文章、issue 正文及其他书面材料，标出原文缺少的论证环节 | `polish-writing`、`润色` |
 | [handoff](./skills/productivity/handoff/SKILL.md) | 把当前会话压缩成交接文档，供下一个 agent 接手 | `handoff` |
 | [github-project](./skills/productivity/github-project/SKILL.md) | 管理 GitHub Project 中 issue/PR 的加入、查询与状态迁移 | `github-project` |
 | [open-pr](./skills/productivity/open-pr/SKILL.md) | 推送分支、创建 PR（AI 标记标题）、评审改动；分支是栈的一层时指向下层分支并入栈 | `open-pr`、`提 PR` |
