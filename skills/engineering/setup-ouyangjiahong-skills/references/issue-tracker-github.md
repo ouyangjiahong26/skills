@@ -6,7 +6,7 @@
 
 - 创建 issue：`gh issue create --title "..." --body "..."`。多行正文用 heredoc。
 - AI 贡献标记：AI 提交的 issue 与 PR 标题以 `[AI Generated][<类型>]` 开头（类型是大写标签，如 `[FIX]`、`[DOCS]`）。AI 写的评论首行用 `> **[AI Generated]** 本评论由 AI 完成。` 或 `> **[AI Assisted]** 本评论由 AI 辅助完成。`
-- 读取 issue：`gh issue view <number> --json number,title,body,labels,comments`，用 `jq` 过滤评论，同时获取标签。
+- 读取 issue：`gh issue view <number> --json number,title,body,labels,comments,state,author,createdAt`，用 `jq` 过滤评论，同时获取标签和元数据。
 - 列出 issue：`gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'`，按需加 `--label`、`--state` 过滤。
 - 评论 issue：`gh issue comment <number> --body "..."`
 - 添加 / 移除标签：`gh issue edit <number> --add-label "..."` / `--remove-label "..."`
@@ -61,7 +61,7 @@ GitHub 的 issue 和 PR 共享编号空间，所以 `#42` 可能是其中任一�
 
 ## 当技能说“获取相关工单”时
 
-运行 `gh issue view <number> --json number,title,body,labels,comments`。
+运行 `gh issue view <number> --json number,title,body,labels,comments,state,author,createdAt`。
 
 ## GitHub Project
 

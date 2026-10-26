@@ -6,7 +6,7 @@ Issues and PRDs for this repo live as GitHub issues. Use the `gh` CLI for all op
 
 - Create an issue: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
 - AI contributions: prefix issue and PR titles with `[AI Generated][<type>] `, where `<type>` is an uppercase change type such as `FIX` or `DOCS`. Start AI-written comments with `> **[AI Generated]** ...` (written by AI, unedited) or `> **[AI Assisted]** ...` (AI-drafted, human-edited). See `docs/agents/ai-contribution.md`.
-- Read an issue: `gh issue view <number> --json number,title,body,labels,comments`, filtering comments with `jq` and reading labels from the same JSON.
+- Read an issue: `gh issue view <number> --json number,title,body,labels,comments,state,author,createdAt`, filtering comments with `jq` and reading labels from the same JSON.
 - List issues: `gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters.
 - Comment on an issue: `gh issue comment <number> --body "..."`
 - Apply / remove labels: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
@@ -32,4 +32,4 @@ Create a GitHub issue.
 
 ## When a skill says "fetch the relevant ticket"
 
-Run `gh issue view <number> --json number,title,body,labels,comments`.
+Run `gh issue view <number> --json number,title,body,labels,comments,state,author,createdAt`.
