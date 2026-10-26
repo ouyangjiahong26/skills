@@ -23,6 +23,7 @@
       "name": "Productivity",
       "skills": [
         "./skills/productivity/grilling",
+        "./skills/productivity/polish-writing",
         "./skills/productivity/handoff",
         "./skills/productivity/github-project",
         "./skills/productivity/merge-pr",

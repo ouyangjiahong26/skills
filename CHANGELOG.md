@@ -9,6 +9,8 @@
 
 ### 新增
 
+- `polish-writing`：按表达标准、读者理解和专家核查润色中英文文章、issue 正文及其他书面材料。
+
 - `github-governance`：仓库治理的审计与修复合一，`github-repo-audit` 与 `github-gov-fix` 合并为单条入口。
 - `setup-pi`：pi harness 的引导流程；`piw` / `piw-clean` 提供 POSIX 与 Windows PowerShell 两版。
 - `merge-pr`：自 `open-pr` 拆出的预检、合并与清理；`open-pr` 只留推送、建 PR 与评审。
