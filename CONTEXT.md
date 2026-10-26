@@ -2,11 +2,11 @@
 
 ## Skill
 
-A self-contained unit of agent behaviour, defined by a `SKILL.md` (YAML frontmatter: `name`, `description` required; `argument-hint`, `disable-model-invocation` optional) and optional supplementary files at the skill root. Each skill lives at `skills/<group>/<name>/`, grouped as `engineering` or `productivity`.
+A self-contained unit of agent behaviour, defined by a `SKILL.md` (YAML frontmatter: `name` and `description` required, `argument-hint` and `disable-model-invocation` optional) and optional supplementary files at the skill root. Each skill lives at `skills/<group>/<name>/`, grouped as `engineering` or `productivity`.
 
 ## Plugin
 
-A manifest at `.claude-plugin/marketplace.json` grouping skill paths under `plugins[]` (Engineering, Productivity). Lets the repo be loaded as a unit by agent harnesses that read the plugin format.
+A manifest at `.claude-plugin/marketplace.json` grouping skill paths under `plugins[]` (Engineering, Productivity). It lets the repo be loaded as a unit by agent harnesses that read the plugin format.
 
 ## Linking
 

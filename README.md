@@ -2,11 +2,11 @@
 
 [![skills.sh](https://skills.sh/b/ouyangjiahong26/skills)](https://skills.sh/ouyangjiahong26/skills)
 
-一套给 AI 编码 agent 用的 skills，小、可组合，来自日常工程习惯。共 20 个，大部分对齐 [mattpocock/skills](https://github.com/mattpocock/skills) 并翻译成中文，覆盖从规格讨论到 PR 合并的日常循环。
+一套给 AI 编码 agent 用的 skills，小、可组合，来自日常工程习惯。共 20 个，大部分对齐 [mattpocock/skills](https://github.com/mattpocock/skills) 并翻译成中文，覆盖从计划讨论到 PR 合并的日常循环。
 
 ## 写作要求的来历
 
-[`setup-ouyangjiahong-skills`](./skills/engineering/setup-ouyangjiahong-skills/SKILL.md) 注入的"写作要求"一节，提炼自《毛泽东年谱》中毛泽东关于写作的论述。比如 1955 年他提醒："关于写文章，请注意不要用过于夸大的修饰词，反而减损了力量……废话应当尽量除去。"又如他评价文件的标准：逻辑性、准确性、鲜明性，要使人读得下去、读后脑中有印象。
+[`setup-ouyangjiahong-skills`](./skills/engineering/setup-ouyangjiahong-skills/SKILL.md) 注入的“写作要求”一节，提炼自《毛泽东年谱》中毛泽东关于写作的论述。比如 1955 年他提醒：“关于写文章，请注意不要用过于夸大的修饰词，反而减损了力量……废话应当尽量除去。”又如他评价文件的标准：逻辑性、准确性、鲜明性，要使人读得下去、读后脑中有印象。
 
 这个仓库的文档，包括这份 README，也按这些要求写。
 
@@ -26,14 +26,14 @@ CLI 读取 `.claude-plugin/marketplace.json`，安装时提示选择分组（Eng
 
 一条从仓库初始化到 PR 合并的完整路径：
 
-1. 拿到新仓库，先跑 [`/setup-ouyangjiahong-skills`](./skills/engineering/setup-ouyangjiahong-skills/SKILL.md)：把写作要求、编码准则注入 `AGENTS.md`，并配置 issue tracker、分诊标签和领域文档；后续会话自动遵守。
-2. 做事之前讨论计划，配 [`/grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md) 追问打磨，把术语和架构决定写进 `CONTEXT.md` 和 ADR。
-3. 推进实现；卡在难调的 bug 上时用 [`/diagnosing-bugs`](./skills/engineering/diagnosing-bugs/SKILL.md)。
+1. 拿到新仓库，先跑 [`/setup-ouyangjiahong-skills`](./skills/engineering/setup-ouyangjiahong-skills/SKILL.md)：把写作要求、编码准则注入 `AGENTS.md`，并配置 issue tracker、分诊标签和领域文档。后续会话自动遵守。
+2. 做事之前先讨论计划，用 [`/grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md) 追问打磨，把术语和架构决定写进 `CONTEXT.md` 和 ADR。
+3. 推进实现。卡在难调的 bug 上时用 [`/diagnosing-bugs`](./skills/engineering/diagnosing-bugs/SKILL.md)。
 4. 干完活用 [`/code-review`](./skills/engineering/code-review/SKILL.md) 审查改动，[`/git-commit`](./skills/engineering/git-commit/SKILL.md) 提交，[`/open-pr`](./skills/productivity/open-pr/SKILL.md) 开 PR 并评审，[`/merge-pr`](./skills/productivity/merge-pr/SKILL.md) 合并并清理。
 
 ## GitHub 管理
 
-AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头；AI 写的评论，首行标明由 AI 完成还是 AI 辅助完成。维护者扫一眼就知道该按什么信任级别去读，也清楚责任落在谁身上。约定见 [`docs/agents/ai-contribution.md`](./docs/agents/ai-contribution.md)。
+AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头。AI 写的评论，首行标明由 AI 完成还是 AI 辅助完成。维护者扫一眼就知道该按什么信任级别去读，也清楚责任落在谁身上。约定见 [`docs/agents/ai-contribution.md`](./docs/agents/ai-contribution.md)。
 
 ## Skill 列表
 
@@ -64,12 +64,12 @@ AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头；AI 写
 | [polish-writing](./skills/productivity/polish-writing/SKILL.md) | 按全文到词语的顺序，从表达标准、读者理解和专家核查三个角度润色中英文文章、issue 正文及其他书面材料，标出原文缺少的论证环节 | `polish-writing`、`润色` |
 | [handoff](./skills/productivity/handoff/SKILL.md) | 把当前会话压缩成交接文档，供下一个 agent 接手 | `handoff` |
 | [github-project](./skills/productivity/github-project/SKILL.md) | 管理 GitHub Project 中 issue/PR 的加入、查询与状态迁移 | `github-project` |
-| [open-pr](./skills/productivity/open-pr/SKILL.md) | 推送分支、创建 PR（AI 标记标题）、评审改动；分支是栈的一层时指向下层分支并入栈 | `open-pr`、`提 PR` |
+| [open-pr](./skills/productivity/open-pr/SKILL.md) | 推送分支、创建 PR（AI 标记标题）、评审改动。分支是栈的一层时指向下层分支并入栈 | `open-pr`、`提 PR` |
 | [merge-pr](./skills/productivity/merge-pr/SKILL.md) | 预检评审与 CI、合并 PR（栈内自底向上走异步合并接口）、清理分支与 worktree | `merge-pr`、`合并分支` |
 
 ## 相关项目
 
-- **[mattpocock/skills](https://github.com/mattpocock/skills)**：本仓库软件工程 skill 的上游。软件工程部分的 skill 对齐该项目当前版本、翻译成中文；自创 skill（`setup-ouyangjiahong-skills`、`setup-pi`、`git-commit`、`open-pr`、`merge-pr`、`github-project`）为本仓库独有。
+- [mattpocock/skills](https://github.com/mattpocock/skills)：本仓库软件工程 skill 的上游。这部分 skill 对齐该项目当前版本、翻译成中文。自创 skill（`setup-ouyangjiahong-skills`、`setup-pi`、`git-commit`、`open-pr`、`merge-pr`、`github-project`）为本仓库独有。
 
 ## 目录结构
 
@@ -86,7 +86,7 @@ AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头；AI 写
 
 ## 新增 Skill
 
-1. 在 `skills/<group>/<name>/` 下创建 `SKILL.md`（含 frontmatter：`name`、`description`）。写作规范见 [`docs/skill-writing.md`](./docs/skill-writing.md)，可从 [`docs/templates/SKILL.md`](./docs/templates/SKILL.md) 复制骨架起步
+1. 在 `skills/<group>/<name>/` 下创建 `SKILL.md`（含 frontmatter：`name`、`description`）。写作标准见 [`docs/skill-writing.md`](./docs/skill-writing.md)，可从 [`docs/templates/SKILL.md`](./docs/templates/SKILL.md) 复制骨架起步
 2. 在 `.claude-plugin/marketplace.json` 对应分组的 `skills` 数组里加一行（必须以 `./` 开头）
 3. 重跑 `npx skills add ouyangjiahong26/skills`
 

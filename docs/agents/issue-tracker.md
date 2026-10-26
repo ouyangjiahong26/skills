@@ -5,14 +5,14 @@ Issues and PRDs for this repo live as GitHub issues. Use the `gh` CLI for all op
 ## Conventions
 
 - Create an issue: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
-- AI contributions: prefix issue and PR titles with `[AI Generated][<type>] `, an uppercase change-type tag like `[FIX]` or `[DOCS]`. Start AI-written comments with `> **[AI Generated]** ...` (written by AI, unedited) or `> **[AI Assisted]** ...` (AI-drafted, human-edited). See `docs/agents/ai-contribution.md`.
-- Read an issue: `gh issue view <number> --comments`, filtering comments by `jq` and also fetching labels.
+- AI contributions: prefix issue and PR titles with `[AI Generated][<type>] `, where `<type>` is an uppercase change type such as `FIX` or `DOCS`. Start AI-written comments with `> **[AI Generated]** ...` (written by AI, unedited) or `> **[AI Assisted]** ...` (AI-drafted, human-edited). See `docs/agents/ai-contribution.md`.
+- Read an issue: `gh issue view <number> --json number,title,body,labels,comments`, filtering comments with `jq` and reading labels from the same JSON.
 - List issues: `gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters.
 - Comment on an issue: `gh issue comment <number> --body "..."`
 - Apply / remove labels: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
 - Close: `gh issue close <number> --comment "..."`
 
-Infer the repo from `git remote -v` — `gh` does this automatically when run inside a clone.
+Infer the repo from `git remote -v`. `gh` does this automatically when run inside a clone.
 
 ## Pull requests as a triage surface
 
@@ -24,7 +24,7 @@ External PRs run through the same labels and states as issues, using the `gh pr`
 - List external PRs for triage: `gh pr list --state open --json number,title,body,labels,author,authorAssociation,comments` then keep only `authorAssociation` of `CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR`, or `NONE` (drop `OWNER`/`MEMBER`/`COLLABORATOR`).
 - Comment / label / close: `gh pr comment`, `gh pr edit --add-label`/`--remove-label`, `gh pr close`.
 
-GitHub shares one number space across issues and PRs, so a bare `#42` may be either — resolve with `gh pr view 42` and fall back to `gh issue view 42`.
+GitHub shares one number space across issues and PRs, so a bare `#42` may be either. Resolve it with `gh pr view 42` and fall back to `gh issue view 42`.
 
 ## When a skill says "publish to the issue tracker"
 

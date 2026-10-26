@@ -1,6 +1,6 @@
 # AI 贡献标记
 
-本仓库接受 AI 提交的 issue、PR 和评论，但要求来源一眼可辨：维护者决定要不要读、要不要复核之前，先看标记。
+本仓库接受 AI 提交的 issue、PR 和评论，但要求来源一眼可辨：维护者在决定要不要读、要不要复核之前，先看标记。
 
 ## 规则
 
@@ -10,6 +10,8 @@
 | PR 标题 | 最开头 | `[AI Generated][<类型>]` |
 | 评论 | 第一行 | `> **[AI Generated]** 本评论由 AI 完成。` |
 | 评论 | 第一行 | `> **[AI Assisted]** 本评论由 AI 辅助完成。` |
+
+AI 独立写成用 `[AI Generated]`，AI 起草且人类做了实质修改用 `[AI Assisted]`。
 
 标题写成 `[AI Generated][<类型>] <标题>`：标记在最前，紧跟方括号类型标签，再空一格写标题，如 `[AI Generated][FIX] 修正 piw-clean 的合并判断`。类型标签按改动性质取大写，取值同 [git-commit 的类型表](../../skills/engineering/git-commit/references/git-workflow.md)（`[FIX]`、`[DOCS]`、`[FEAT]`、`[REFACTOR]`、`[TEST]`、`[CHORE]`、`[STYLE]`）。标题已带标记的不再叠加。
 
