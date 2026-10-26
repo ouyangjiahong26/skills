@@ -1,6 +1,6 @@
 ---
 name: setup-ouyangjiahong-skills
-description: 初始化仓库的写作标准与工程技能配置：把写作要求、编码准则注入 AGENTS.md，并配置 issue tracker、分诊标签和领域文档。首次配置仓库时手动运行。
+description: 初始化仓库的写作标准与工程技能配置：把写作要求、编码准则注入 AGENTS.md，并配置 issue tracker、分诊标签、领域文档。首次配置仓库时手动运行。
 disable-model-invocation: true
 ---
 
@@ -23,7 +23,7 @@ disable-model-invocation: true
 
    `{{SKILL_DIR}}` 是 skill 所在目录的绝对路径，由 harness 替换。
 3. 以退出码判断结果：退出码 `0` 表示同步并验证成功。非 `0` 时报告完整错误并停止。
-4. 成功后对 `AGENTS.md` 执行 `git diff`，向用户说明新增、替换或保留的内容。
+4. 成功后查看 `AGENTS.md` 的改动：已跟踪时用 `git diff -- AGENTS.md`，未跟踪时直接读文件。向用户说明新增、替换或保留的内容。
 
 脚本已经包揽文件读取、节切分、写入、行尾归一化和一致性验证。不要再手动编辑同一批文件，也不要用其他脚本重复实现这些步骤。
 
@@ -36,7 +36,7 @@ disable-model-invocation: true
 - `git remote -v` 和 `.git/config`，判断 GitHub、GitLab 或其他托管方式。
 - 根目录 `AGENTS.md`，以及其中的 Agent 协议节。
 - `CONTEXT.md`、`CONTEXT-MAP.md`、`docs/adr/`、`*/*/docs/adr/`、`docs/agents/`、`.scratch/`。
-- `triage` skill 是否可用。
+- 检查 `triage` skill 是否可用。
 - `pnpm-workspace.yaml` 与 `package.json` 的 `workspaces`，判断是否为明确的大型 monorepo。
 
 ## 3. 决策
@@ -85,7 +85,7 @@ GitHub remote 默认 GitHub（`gh`），GitLab remote 默认 GitLab（`glab`）�
 
 ## 5. 写入与结束
 
-- 编辑 `AGENTS.md`。不存在时创建。
+- 编辑 `AGENTS.md` 的 Agent 协议节。文件不存在时创建。
 - 已有 Agent 协议节时在其中更新，避免重复。
 - 完成后说明哪些工程技能会读取 `docs/agents/*.md`。
 

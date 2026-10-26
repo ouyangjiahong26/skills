@@ -1,20 +1,20 @@
 ---
 name: github-project
-description: 管理 GitHub Project 中 Issue 与 PR 的加入、查询、状态和字段。用户要求把工单加入看板、移动状态或同步 Project 时手动运行。
+description: 管理 Issue 与 PR 在 GitHub Project 中的加入、查询、状态迁移和字段设置。用户要求把 Issue 或 PR 加入看板、移动状态或同步 Project 时手动运行。
 argument-hint: "[#issue|#pr|ready|in-progress|in-review|done]"
 disable-model-invocation: true
 ---
 
 # GitHub Project
 
-按当前仓库 `docs/agents/issue-tracker.md` 的“GitHub Project”节操作。该节不存在、标为“否”或缺所需的字段 / 选项 ID 时停止，叫用户跑 `/setup-ouyangjiahong-skills`，不要猜 Project、字段或选项 ID。
+按当前仓库 `docs/agents/issue-tracker.md` 的“GitHub Project”节操作。该节不存在、标为“否”或缺少所需的字段或选项 ID 时停止，提示用户跑 `/setup-ouyangjiahong-skills`，不猜 Project、字段或选项 ID。
 
 ## 规则
 
 - Project Status 是工作状态。label 只表达分类、领域或分诊角色。
 - Issue 与 PR 都应加入 Project。同一编号可能对应 Issue 或 PR，先用 `gh pr view <n>` 确认，失败再用 `gh issue view <n>`。
 - 所有写操作前先读取 Project item，避免重复添加或覆盖未知字段。
-- 只在迁到 `Done`（原因 `Completed`）或 `No action`（原因 `Not planned`）时关闭 Issue，其他迁移不关闭。`Done` 只用于 PR 已合并且行为已验证的工作。
+- 只在迁移到 `Done`（原因 `Completed`）或 `No action`（原因 `Not planned`）时关闭 Issue，其他迁移不关闭。`Done` 只用于 PR 已合并且行为已验证的工作。
 - PR 关闭但未合并时，不自动设为 `No action`。
 
 ## 常用流程
@@ -32,7 +32,7 @@ disable-model-invocation: true
 - 已排期可开始：`Ready`
 - 开始实现：`In progress`
 - 创建 PR：`In review`
-- PR 合并并验证完成：`Done`，随后关闭 Issue，原因 `Completed`
+- PR 合并并验证完成：`Done`。有相关 Issue 时关闭 Issue，原因 `Completed`。无相关 Issue 时只迁移 PR 项。
 - 明确拒绝：`No action`，随后关闭 Issue，原因 `Not planned`
 - 重开 Issue：`Inbox`
 

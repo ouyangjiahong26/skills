@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 把项目 issue tracker 上的 issue 推过一台小型分诊状态机。
 
-如果本仓库把外部 PR 也当作请求入口（见 issue-tracker 配置），分诊同样覆盖它们：PR 就是带代码的 issue：同样的角色、同样的状态、同一台机器，下文几处标了“针对 PR”的差异。裸 `#42` 按 tracker 配置解析为 issue 或 PR。
+如果本仓库把外部 PR 也当作请求入口（见 issue-tracker 配置），分诊同样覆盖它们。PR 就是带代码的 issue，同样的角色、同样的状态、同一台机器，下文几处标了“针对 PR”的差异。裸 `#42` 按 tracker 配置解析为 issue 或 PR。
 
 分诊期间发到 issue tracker 的每条评论或 issue，必须以下面这行 AI 贡献标记开头：
 
@@ -44,7 +44,7 @@ disable-model-invocation: true
 
 以上是标准角色名：issue tracker 里实际的 label 字符串可能不同。映射关系应当已提供。如未提供，叫用户跑 `/setup-ouyangjiahong-skills`。
 
-状态流转：无 label 的 issue 通常先进 `needs-triage`。从那里移到 `needs-info`、`ready-for-agent`、`ready-for-human` 或 `wontfix`。报告人回复后，`needs-info` 回到 `needs-triage`。维护者可随时覆盖：看起来异常的流转要先标出、先问再动。
+状态流转：无 label 的 issue 通常先进 `needs-triage`。从那里移到 `needs-info`、`ready-for-agent`、`ready-for-human` 或 `wontfix`。报告人回复后，`needs-info` 回到 `needs-triage`。维护者可随时覆盖：看起来异常的流转要先标出并询问，再动手。
 
 ## GitHub Project 同步
 
@@ -69,31 +69,31 @@ GitHub 仓库若配置了 Project，分诊时按 `github-project` skill 的 refe
 
 PR 在范围内时，把它们也纳入这些类别，每行标注 `[PR]` 或 `[issue]`。发现过程只暴露*外部* PR（tracker 配置定义了谁算外部），协作者进行中的 PR 不是分诊工作。这只在发现阶段过滤。明确点名的 PR 不论作者一律分诊。
 
-展示数量和每项一行摘要，让维护者挑。
+展示数量和每项的一行摘要，让维护者挑选。
 
 ## 分诊某个具体的 issue 或 PR
 
-1. 收集上下文。 完整读 issue 或 PR（正文、评论、label、作者、日期。PR 还要读 diff）。解析已有的分诊记录，避免重复问已解决的问题。用项目的领域术语表探索代码库，遵守相关区域的 ADR。对着代码库做两项检查：(a) 重复：按领域概念（而非请求的字面措辞）搜索请求的行为是否已有实现，报告你查过哪里。若已存在，这是已实现的 `wontfix`（第 5 步）。(b) 曾被拒绝：读 `.out-of-scope/*.md`，浮出与本请求相似的条目。
+1. 收集上下文。完整读 issue 或 PR（正文、评论、label、作者、日期，PR 还要读 diff）。解析已有的分诊记录，避免重复问已解决的问题。用项目的领域术语表探索代码库，遵守相关区域的 ADR。对着代码库做两项检查：(a) 重复：按领域概念（而非请求的字面措辞）搜索请求的行为是否已有实现，报告你查过哪里。若已存在，这是已实现的 `wontfix`（第 5 步）。(b) 曾被拒绝：读 `.out-of-scope/*.md`，浮出与本请求相似的条目。
 
-2. 给出建议。 告诉维护者你建议的分类和状态，附理由，以及与请求相关的代码库摘要：包括是否已实现。等维护者指示。
+2. 给出建议。告诉维护者你建议的分类和状态，附上理由，并给出与本请求相关的代码库摘要，包括是否已实现。等维护者指示。
 
-3. 验证主张。 在任何追问之前，先核实主张站不站得住。bug 按报告人的步骤复现。PR 确认 diff 确实做了它声称的事：checkout 出来，跑相关测试或命令。报告结果：已确认（附代码路径）、复现失败、或细节不足（强烈的 `needs-info` 信号）。一次成功的验证会让 agent brief 强得多。
+3. 验证主张。在任何追问之前，先核实主张是否成立。bug 按报告人的步骤复现。PR 确认 diff 确实做了它声称的事：checkout 出来，跑相关测试或命令。报告结果：已确认（附代码路径）、复现失败、细节不足（强烈的 `needs-info` 信号）。一次成功的验证会让 agent brief 更有说服力。
 
-4. 追问（如需）。 若请求需要充实，调用两次 Skill 工具，分别传入 “grilling” 和 “domain-modeling”，一次一个问题把它问成形，磨锐领域术语，并在决策落定时同步更新 `CONTEXT.md`/ADR。
+4. 追问（如需）。若请求需要充实，调用两次 Skill 工具，分别传入“grilling”和“domain-modeling”，一次只问一个问题，把请求问成形，同时打磨领域术语。决策落定时同步更新 `CONTEXT.md`/ADR。
 
 5. 应用结论：
    - `ready-for-agent`：发一条 agent brief 评论（[AGENT-BRIEF.md](AGENT-BRIEF.md)）。
    - `ready-for-human`：与 agent brief 同结构，但说明为什么不能委派（需要判断、外部权限、设计决策、人工测试）。
    - `needs-info`：发分诊记录（模板见下）。
    - `wontfix`：关闭，评论内容取决于*为什么*：
-     - 已实现：改动已在代码库中存在。指向它所在位置。不要写入 `.out-of-scope/`（那个知识库是给*被拒绝*的请求用的，不是已建好的功能）。
+     - 已实现：改动已在代码库中存在。指出它所在的位置。不要写入 `.out-of-scope/`（那个知识库是给*被拒绝*的请求用的，不是已建好的功能）。
      - 被拒（bug）：礼貌解释，然后关闭。
      - 被拒（enhancement）：写入 `.out-of-scope/`，评论里链接它，然后关闭（[OUT-OF-SCOPE.md](OUT-OF-SCOPE.md)）。
    - `needs-triage`：套上角色。若有部分进展，可选地留条评论。
 
 ## 快速状态覆盖
 
-若维护者说“把 #42 移到 ready-for-agent”，信任他，直接套上角色。确认你将要做什么（角色变更、评论、关闭），然后执行。跳过追问。若未经过追问就移到 `ready-for-agent`，问要不要写一份 agent brief。
+若维护者说“把 #42 移到 ready-for-agent”，信任这个判断，直接套上角色。确认将要做的动作（角色变更、评论、关闭），然后执行。跳过追问。若未经过追问就移到 `ready-for-agent`，问要不要写一份 agent brief。
 
 ## Needs-info 模板
 
@@ -115,4 +115,4 @@ PR 在范围内时，把它们也纳入这些类别，每行标注 `[PR]` 或 `[
 
 ## 恢复之前的会话
 
-若 issue 或 PR 上已有分诊记录，读它们，检查报告人是否已回答了任何遗留问题，呈现更新后的画面再继续。别重复问已解决的问题。
+若 issue 或 PR 上已有分诊记录，读它们，检查报告人是否已回答了任何遗留问题，呈现更新后的情况再继续。别重复问已解决的问题。

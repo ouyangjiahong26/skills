@@ -1,6 +1,6 @@
 # piw / piw-clean 命令（Windows PowerShell 函数）
 
-用于 Windows 上从 PowerShell 使用 `pi` 的场景：两个函数写入 `$PROFILE`（用户实际在用的那个 PowerShell 的 profile）。文件必须存成 UTF-8 带 BOM：Windows PowerShell 5.1 对无 BOM 的脚本按系统 ANSI 码页解码，中文注释和提示会乱码。Windows 上从 git-bash / MSYS 使用 `pi` 时改用 POSIX 模板 [piw-commands.md](./piw-commands.md)。
+用于 Windows 上从 PowerShell 使用 `pi` 的场景：把两个函数写入 `$PROFILE`（用户实际在用的那个 PowerShell 的 profile）。该文件必须存成 UTF-8 带 BOM：Windows PowerShell 5.1 对无 BOM 的脚本按系统 ANSI 码页解码，中文注释和提示会乱码。Windows 上从 git-bash / MSYS 使用 `pi` 时改用 POSIX 模板 [piw-commands.md](./piw-commands.md)。
 
 ```powershell
 # piw: 新建分支+worktree 并直接进入 pi
@@ -142,7 +142,7 @@ if (-not ($b.Length -ge 3 -and $b[0] -eq 0xEF -and $b[1] -eq 0xBB -and $b[2] -eq
 }
 ```
 
-这一步按 UTF-8 重新解释整个文件。原文件里已有非 UTF-8 的编码（如旧 ANSI 码页写的中文）时先停下来问用户，不要整体转码。
+这一步按 UTF-8 重新解释整个文件。原文件里已有非 UTF-8 编码的内容（如旧 ANSI 码页写的中文）时，先停下来问用户，不要整体转码。
 
 ## 注意
 
@@ -161,7 +161,7 @@ if (-not ($b.Length -ge 3 -and $b[0] -eq 0xEF -and $b[1] -eq 0xBB -and $b[2] -eq
 
 ## Windows Terminal：Ctrl+Shift+T 复制当前标签（继承 cwd）
 
-WT 的普通 `newTab` 不继承当前目录。`duplicateTab` 会复用 shell 通过 OSC 9。9 上报的最后工作目录。下面两处配合后，`Ctrl+Shift+T` = 复制当前标签（同一 profile、同一目录、同字体设置）。两处独立，可只取其一（cwd 跟踪对 `alt+shift+d` 的 splitMode: duplicate 分屏同样有效）。
+WT 的普通 `newTab` 不继承当前目录。`duplicateTab` 会复用 shell 通过 `OSC 9;9` 上报的最后工作目录。下面两处配合后，`Ctrl+Shift+T` = 复制当前标签（同一 profile、同一目录、同字体设置）。两处改动互不覆盖，可以分别实施。但 `duplicateTab` 要继承目录，必须启用 cwd 跟踪。只改 settings.json 时，复制出的标签不保证同目录。cwd 跟踪对 `alt+shift+d` 的 splitMode: duplicate 分屏同样有效。
 
 ### 1. $PROFILE 末尾追加 prompt 包装
 
@@ -180,15 +180,15 @@ function global:prompt {
 }
 ```
 
-- 只在 FileSystem provider 下输出：注册表等 provider 的路径发给 WT 会报错。
+- 只在 FileSystem provider 下输出该序列：注册表等 provider 的路径发给 WT 会报错。
 - 目录更新依赖提示符渲染：`cd` 之后出现过一次提示符（正常交互都会满足）才会上报。
-- 不支持 OSC 9。9 的终端会忽略该序列，无害。
+- 不支持 `OSC 9;9` 的终端会忽略该序列，无害。
 - 幂等：`$PROFILE` 里已能搜到 `]9;9;` 就跳过，不写第二份。
 - 追加后做与函数块相同的 UTF-8 带 BOM 归一化（见上节）。
 
 ### 2. settings.json 把 Ctrl+Shift+T 绑到 duplicateTab
 
-定位 WT 的 settings.json（取先存在者。都没有则跳过本步并说明）：
+定位 WT 的 settings.json（取先存在者，都没有则跳过本步并说明）：
 
 - Store 版：`$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json`
 - 解包版：`$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json`
@@ -201,16 +201,16 @@ function global:prompt {
 
 - 已把 `duplicateTab` 绑到 `ctrl+shift+t` 就跳过。`ctrl+shift+t` 绑了其他命令时展示差异，确认后替换。
 - settings.json 允许 `//` 注释和尾逗号（JSONC），严格 JSON 校验失败不代表 WT 拒绝该文件。含注释时跳过校验。
-- 想开全新空白标签用标签栏 `+` 按钮，或 `alt+shift+d` 分屏（splitMode: duplicate，同样继承目录）。
+- 想开全新空白标签时用标签栏 `+` 按钮，或 `alt+shift+d` 分屏（splitMode: duplicate，同样继承目录）。
 - WT 保存 settings.json 后热加载，无需重开窗口。
 
 ### 验证
 
-重开一个 PowerShell 会话（或 `. $PROFILE`），cd 后捕获 prompt 输出应含 OSC 序列且原提示符仍正常渲染：
+重开一个 PowerShell 会话（或执行 `. $PROFILE`），cd 后捕获 prompt 输出，应含 OSC 序列且原提示符仍正常渲染：
 
 ```powershell
 Set-Location C:\Windows
 (& { prompt } 6>&1 | Out-String) -match '\x1b\]9;9;"C:\\Windows"'
 ```
 
-应输出 `True`。settings.json 无注释时 `Get-Content -Raw <路径> | ConvertFrom-Json` 应成功。手按 Ctrl+Shift+T 应复制出同目录标签。
+应输出 `True`。settings.json 无注释时 `Get-Content -Raw <路径> | ConvertFrom-Json` 应成功。手动按 Ctrl+Shift+T 应复制出同目录标签。

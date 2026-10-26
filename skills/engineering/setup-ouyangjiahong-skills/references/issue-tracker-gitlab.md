@@ -11,9 +11,9 @@
 - 评论 issue：`glab issue note <number> --message "..."`。GitLab 把评论叫作“note”。
 - 添加 / 移除标签：`glab issue update <number> --label "..."` / `--unlabel "..."`。多个标签用逗号分隔或重复该 flag。
 - 关闭：`glab issue close <number>`。`glab issue close` 不接受关闭评论，所以先用 `glab issue note <number> --message "..."` 发说明，再关闭。
-- Merge request：GitLab 把 PR 叫作“merge request”。用 `glab mr create`、`glab mr view`、`glab mr note` 等，形状与 `gh pr ...` 相同，只是 `mr` 替代 `pr`，`note`/`--message` 替代 `comment`/`--body`。
+- Merge request：GitLab 把 PR 叫作“merge request”。用 `glab mr create`、`glab mr view`、`glab mr note` 等，用法与 `gh pr ...` 相同，只是 `mr` 替代 `pr`，`note`/`--message` 替代 `comment`/`--body`。
 
-从 `git remote -v` 推导仓库，`glab` 在 clone 内运行时自动识别。
+从 `git remote -v` 推断仓库，`glab` 在 clone 内运行时自动识别。
 
 ## Merge request 作为分诊渠道
 
@@ -25,7 +25,7 @@ MR 作为请求渠道：否。 _（如果本仓库将外部 MR 视为功能请�
 - 列出待分诊的外部 MR：`glab mr list -F json`，只保留作者不是项目成员/所有者的（贡献者的 MR，而非维护者进行中的工作）。
 - 评论 / 打标签 / 关闭：`glab mr note`、`glab mr update --label`/`--unlabel`、`glab mr close`。
 
-与 GitHub 不同，GitLab 的 issue 和 MR 编号是分开的，所以 `#42` 一旦知道指的是哪个渠道就是明确的。
+与 GitHub 不同，GitLab 的 issue 和 MR 编号各自独立，所以只要知道 `#42` 指哪个渠道，编号就是明确的。
 
 ## 当技能说“发布到 issue tracker”时
 

@@ -4,7 +4,7 @@
 
 ## 配置来源
 
-目标仓库 `docs/agents/issue-tracker.md` 的 GitHub Project 节：项目、字段与选项 ID 全部取自那里，不猜测。状态到选项的映射见本 skill 的状态迁移节。
+目标仓库 `docs/agents/issue-tracker.md` 的 GitHub Project 节：项目、字段与选项 ID 全部取自那里，不猜测。状态与选项的映射见本 skill 的“状态迁移”节。
 
 ## 纪律
 
@@ -16,6 +16,6 @@
 
 | 情况 | 处理方式 |
 |------|----------|
-| 配置节不存在或缺字段 ID | 报告原因，提示跑 `/setup-ouyangjiahong-skills`，跳过 Project 写入 |
-| 配置节标为否 | 不做 Project 写入 |
-| 写入失败 | 报告原因并跳过，不阻塞主流程。需要人工修复时提示跑 `/github-project` |
+| 配置节不存在或缺字段 ID | 报告原因，提示用户跑 `/setup-ouyangjiahong-skills`，跳过 Project 写入 |
+| 配置节标为“否” | 不做 Project 写入 |
+| 写入失败 | 报告原因并跳过，不阻塞主流程。需要人工修复时提示用户跑 `/github-project` |
