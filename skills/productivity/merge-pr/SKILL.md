@@ -5,20 +5,20 @@ argument-hint: “[PR 编号或分支名]（可选，默认当前分支）”
 disable-model-invocation: true
 ---
 
-默认场景是 piw 创建的 worktree：分支 checkout 在独立 worktree 中，主仓库停留在 base 分支。合并在 worktree 内完成，清理阶段需要回到主仓库操作。按顺序执行。在阻塞问题、失败 CI 和合并前停下。PR 在 GitHub 栈里时走异步合并接口，自底向上逐层合并。
+默认场景是 piw 创建的 worktree：分支在独立 worktree 中检出，主仓库停留在 base 分支。合并在 worktree 内完成，清理阶段需要回到主仓库操作。按顺序执行。遇到阻塞问题或 CI 失败时停下。合并前同样停下。PR 在 GitHub 栈里时走异步合并接口，自底向上逐层合并。
 
 ## 1. 确认 PR 与场景
 
-1. 用参数解析分支名或 PR 编号。没有参数则运行 `git rev-parse --abbrev-ref HEAD`。用 `gh pr list --head <branch> --json number,url --jq '.[0]'`（已有 PR 编号则 `gh pr view <number>`）定位 PR。找不到 PR 或当前分支是默认分支时，停止并说明原因。
+1. 从参数解析分支名或 PR 编号。没有参数则运行 `git rev-parse --abbrev-ref HEAD`。用 `gh pr list --head <branch> --json number,url --jq '.[0]'`（已有 PR 编号则 `gh pr view <number>`）定位 PR。找不到 PR 或当前分支是默认分支时，停止并说明原因。
 2. 识别 base（默认分支）：`git remote show origin` 取 HEAD 分支。查询失败时用仓库中存在的 `main` / `master`。
-3. 判断 PR 是否在栈里。在栈里就取出全栈，顺序自底向上：
+3. 判断 PR 是否在栈里。在栈里就按自底向上的顺序取出全栈：
 
 ```bash
 gh api /repos/<owner>/<repo>/pulls/<PR号> --jq '.stack.number // empty'
 gh api /repos/<owner>/<repo>/stacks/<栈号> --jq '.base.ref, ([.pull_requests[] | "\(.number) \(.head.ref) \(.state) \(.draft)"] | join("\n"))'
 ```
 
-`<owner>/<repo>` 由 `gh repo view --json nameWithOwner --jq .nameWithOwner` 取。第一行空即普通 PR，走下面各步中标注“普通 PR”的路径。非空时第二行给出栈底分支与每层的 PR 号、分支名、状态和是否 draft。栈内时本次要落地的层 = 从最低未合并层到目标 PR（含）。
+`<owner>/<repo>` 由 `gh repo view --json nameWithOwner --jq .nameWithOwner` 取。第一行空即普通 PR，走下面各步中标注“普通 PR”的路径。非空时第二行给出栈底分支与每层的 PR 号、分支名、状态和是否 draft。栈内时，本次要落地的层是从最低未合并层到目标 PR（含）的各层。
 4. 用 `git worktree list` 识别场景：
    - 当前目录不是主仓库（属于某个列出的 worktree），判为 worktree 场景（默认）。
    - 否则判为普通场景。
@@ -30,7 +30,7 @@ gh api /repos/<owner>/<repo>/stacks/<栈号> --jq '.base.ref, ([.pull_requests[]
 
 ### 评审
 
-本轮会话已有同一分支、其后无新 commit 的 `code-review` 结论则算通过。否则以 `git merge-base <base> <branch>` 为固定点调用 `code-review` skill。栈内 PR 的 base 是下层分支，这个固定点就是下层 tip，评审范围是本层 diff。有阻塞项（标准见 `/open-pr` 的“评审”节）就按来源列出并停止等待修复。
+本轮会话已有同一分支且其后无新 commit 的 `code-review` 结论，则算通过。否则以 `git merge-base <base> <branch>` 为固定点调用 `code-review` skill。栈内 PR 的 base 是下层分支，这个固定点就是下层分支的最新提交，评审范围是本层 diff。有阻塞项（标准见 `/open-pr` 的“评审”节）就按来源列出并停止等待修复。
 
 ### 可合并性
 
@@ -40,7 +40,7 @@ gh api /repos/<owner>/<repo>/stacks/<栈号> --jq '.base.ref, ([.pull_requests[]
 gh pr view <PR-number> --json state,isDraft,mergeable,mergeStateStatus
 ```
 
-- `state` 不是 `OPEN`：停止并报告。若 PR 因 head 分支被删被 GitHub 自动关闭、且分支已重新推送，询问用户是否 `gh pr reopen` 后重跑本 skill。
+- `state` 不是 `OPEN`：停止并报告。若 PR 因 head 分支被删而被 GitHub 自动关闭，且分支已重新推送，询问用户是否 `gh pr reopen` 后重跑本 skill。
 - `isDraft` 为 `true`（或 `mergeStateStatus` 为 `DRAFT`）：运行 `gh pr ready <PR-number>` 后继续。
 - `mergeable` 为 `CONFLICTING` 或 `mergeStateStatus` 为 `DIRTY`：存在冲突，交由 `/resolving-merge-conflicts`，解决并 push 后重跑本步。
 - `mergeStateStatus` 为 `BEHIND`：head 分支落后 base，按下面“非栈内 PR / 栈内 PR”的对应方式 rebase 后重跑本步。
@@ -59,10 +59,10 @@ gh pr checks <PR-number>
 ```
 
 - 全部通过：进入合并。
-- 有失败：列出失败项，停止等待修复、push 后重跑本 skill。
+- 有失败：列出失败项，停止并等待修复。修复并 push 后重跑本 skill。
 - 仍在运行：每 30 秒重查一次，最多 5 分钟。超时后报告状态并等待用户决定，不能自行合并。
 
-栈内 PR 要对本次要落地的每一层都跑一次 `gh pr checks <层PR号>`，全部通过才继续。任一层失败即停止。
+栈内 PR 要对本次要落地的每一层各跑一次 `gh pr checks <层PR号>`，全部通过才继续。任一层失败即停止。
 
 ## 3. 合并
 
@@ -74,7 +74,7 @@ gh pr checks <PR-number>
 
 ```bash
 # squash：必须显式给 --subject。不给的话 GitHub 拿带标记的 PR 标题当提交标题，
-# 标记就进了提交历史；提交标题按该仓库的 commit 约定写（缺省约定见 git-commit
+# 标记就进了提交历史。提交标题按该仓库的 commit 约定写（缺省约定见 git-commit
 # 的 references/git-workflow.md），正文写改动摘要。
 gh pr merge <PR-number> --squash --subject "<type>(<scope>): <描述> (#<PR-number>)" --body-file <文件>
 
@@ -83,7 +83,7 @@ gh pr merge <PR-number> --merge
 gh pr merge <PR-number> --rebase
 ```
 
-栈内 PR 走异步合并接口，自底向上逐层做到目标 PR。接口会连带合并目标层以下未合并的层，从最低未合并层开始请求，每次就只落地一层：
+栈内 PR 走异步合并接口，自底向上逐层做到目标 PR。接口会连带合并目标层以下未合并的层，所以从最低未合并层开始请求，每次就只落地一层：
 
 ```bash
 gh api --method PUT repos/<owner>/<repo>/pulls/<层PR号>/merge-async \
@@ -92,21 +92,21 @@ gh api --method PUT repos/<owner>/<repo>/pulls/<层PR号>/merge-async \
   -f commit_message="<改动摘要>"
 ```
 
-- `squash` 必须显式给 `commit_title`（`merge` / `rebase` 不给，它们沿用分支上的提交信息）：`commit_title` 只作用于本次请求的目标层。不给时服务端按仓库的 `squash_merge_commit_title` 生成，多提交的层会取 PR 标题，AI 标记就进了提交历史。标题按该层分支的 commit 约定写（缺省约定见 `git-commit` 的 `references/git-workflow.md`），正文写改动摘要。
+- `squash` 必须显式给 `commit_title`（`merge` / `rebase` 不给，它们沿用分支上的 commit message）：`commit_title` 只作用于本次请求的目标层。不给时服务端按仓库的 `squash_merge_commit_title` 生成，多提交的层会取 PR 标题，AI 标记就进了提交历史。标题按该层分支的 commit 约定写（缺省约定见 `git-commit` 的 `references/git-workflow.md`），正文写改动摘要。
 - 响应里取 `details.uuid` 轮询：
 
 ```bash
 gh api repos/<owner>/<repo>/pulls/<层PR号>/merge-async/<uuid> --jq .status
 ```
 
-`pending` 每 2 秒重查一次。`merged` 成功，`details.sha` 是合并提交。`enqueued` 表示已进 merge queue，报告后停下。`failed` 立即停止并报告 `details.message`（栈合并是原子的，失败时没有任何层落地）。
+`pending` 每 2 秒重查一次。`merged` 表示成功，`details.sha` 是合并提交。`enqueued` 表示已进 merge queue，报告后停下。`failed` 立即停止并报告 `details.message`（栈合并是原子的，失败时没有任何层落地）。
 
 - 每层确认 `gh pr view <层PR号> --json state --jq .state` 输出 `MERGED` 再处理下一层。下层落地后其余层会被服务端级联 rebase（SHA 改写、CI 重跑），所以下一层要回第 1 步重读栈、回第 2 步重跑预检。
 - 不要用 `gh stack merge`：它无法指定提交标题，多提交的层会把带标记的 PR 标题写进历史。
 
 不加 `--delete-branch`：gh 删除本地分支前会切到默认分支，worktree 场景下与主仓库占用的 base 分支冲突（报 ``'master' is already used by worktree``），且报错时远端分支也删不掉。远端分支在确认合并后单独删。
 
-合并失败立即停止：报告错误，不做任何清理。未合并的 PR 删除远端 head 分支会被 GitHub 自动关闭，这是禁止操作。
+合并失败立即停止：报告错误，不做任何清理。删除未合并 PR 的远端 head 分支会让 GitHub 自动关闭该 PR，这是禁止操作。
 
 每层合并成功后，确认状态已变为 `MERGED`，再删该层的远端分支（分支名取自第 1 步的全栈输出。非栈内 PR 用当前分支）：
 
@@ -115,11 +115,11 @@ gh pr view <PR-number> --json state --jq .state   # 必须输出 MERGED
 git push origin --delete <branch>
 ```
 
-最后把 PR 项与关联 Issue 置 `Done`，关联 Issue 以 `Completed` 原因关闭。无关联 Issue 只迁 PR 项。栈内落地多层时，每层都做同样的迁移。Project 写入按 `github-project` skill 的 references/sync-discipline.md 执行。
+最后把 PR 项与关联 Issue 置 `Done`，关联 Issue 以 `Completed` 为原因关闭。无关联 Issue 只迁 PR 项。栈内落地多层时，每层都做同样的迁移。Project 写入按 `github-project` skill 的 references/sync-discipline.md 执行。
 
 ## 4. 清理与验证
 
-仅在第 3 步确认 `state` 为 `MERGED` 后执行。删除规则：worktree 场景下本会话不删 worktree 与本地分支（worktree 是会话自身所在目录，删除后 bash 工具即失效，`cd` 前缀无法绕过。且被 worktree checkout 的分支必须先移除 worktree 才能删除），这两项交由主仓库上下文（新会话或用户手动）完成。栈内落地多层时，本地只处理当前分支，其余层的本地分支与 worktree 同样交由主仓库上下文。被服务端 rebase 的上层分支要先在各自 worktree 里 `git pull --rebase`（或在能读到栈跟踪的上下文跑 `gh stack sync --prune`）再继续。
+仅在第 3 步确认 `state` 为 `MERGED` 后执行。删除规则：worktree 场景下本会话不删 worktree 与本地分支（worktree 是会话自身所在目录，删除后 bash 工具即失效，`cd` 前缀无法绕过。被 worktree 检出的分支也必须先移除 worktree 才能删除），这两项交由主仓库上下文（新会话或用户手动）完成。栈内落地多层时，本地只处理当前分支，其余层的本地分支与 worktree 同样交由主仓库上下文。被服务端 rebase 的上层分支要先在各自 worktree 里 `git pull --rebase`（或在能读到栈跟踪的上下文跑 `gh stack sync --prune`）再继续。
 
 ### worktree 场景（默认）
 
@@ -134,7 +134,7 @@ pwd              # 确认已离开 worktree
 3. 此后所有命令一律用 `cd <主仓库路径> && ...` 前缀执行（bash 工具 cwd 仍是 worktree，目录未删前可用）：
 
 ```bash
-cd <主仓库路径> && git checkout <base>   # 主仓库应已在 base；不在则切过去
+cd <主仓库路径> && git checkout <base>   # 主仓库应已在 base，不在则切过去
 cd <主仓库路径> && git pull origin <base>
 ```
 
@@ -161,7 +161,7 @@ cd <主仓库路径> && git pull origin <base>
 | 异步合并返回 `failed` | 立即停止，报告 `details.message`。原子合并，没有任何层落地 |
 | 异步合并返回 `enqueued` | 报告已进 merge queue 后停下，后续由队列决定 |
 | `merge-async` 返回 404 | 该仓库不支持异步合并（栈也不可用），报告并停止 |
-| base 分支启用 merge queue | 逐层合并要等队列消费完才能合下一层，可能超过等待上限。报告并交用户决定（整组入队用 `gh stack merge <目标PR号> --yes --<method>`，此时提交标题由仓库 squash 设置生成） |
+| base 分支启用 merge queue | 逐层合并要等队列处理完才能合下一层，可能超过等待上限。报告并交用户决定（整组入队用 `gh stack merge <目标PR号> --yes --<method>`，此时提交标题由仓库 squash 设置生成） |
 | 栈内 PR 落后或冲突，且 worktree 读不到栈跟踪 | 按第 2 步的本地回退修当前层，报告里提示上层分支需各自 rebase |
 
 不执行 `git reset --hard`、裸 `git push --force` 或 `gh pr close`。rebase 后同步远端分支只允许 `git push --force-with-lease`。
