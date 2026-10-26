@@ -2,7 +2,7 @@
 
 [![skills.sh](https://skills.sh/b/ouyangjiahong26/skills)](https://skills.sh/ouyangjiahong26/skills)
 
-一套给 AI 编码 agent 用的 skills，小、可组合，来自日常工程习惯。共 20 个，大部分对齐 [mattpocock/skills](https://github.com/mattpocock/skills) 并翻译成中文，覆盖从计划讨论到 PR 合并的日常循环。
+一套给 AI 编码 agent 用的 skills，小、可组合，来自日常工程习惯。共 19 个，大部分对齐 [mattpocock/skills](https://github.com/mattpocock/skills) 并翻译成中文，覆盖从计划讨论到 PR 合并的日常循环。
 
 ## 写作要求的来历
 
@@ -50,7 +50,6 @@ AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头。AI 写
 | [tdd](./skills/engineering/tdd/SKILL.md) | 先失败、再通过、后重构的测试先行循环 | `tdd`、`测试驱动` |
 | [refactoring](./skills/engineering/refactoring/SKILL.md) | 测试保护下小步重构，异味到手法映射 | `refactoring`、`重构` |
 | [codebase-design](./skills/engineering/codebase-design/SKILL.md) | 模块划分、接口设计、可测试性与 AI 导航 | `codebase-design` |
-| [performance-optimization](./skills/engineering/performance-optimization/SKILL.md) | 先测量后优化：基准、profiler、一次一个假设 | `性能优化` |
 | [triage](./skills/engineering/triage/SKILL.md) | 把 issue/PR 推过分诊状态机，产出 agent 可认领的 brief | `triage`、`分诊` |
 | [git-commit](./skills/engineering/git-commit/SKILL.md) | 只提交本会话改动的文件，检查分支归属，确认后提交 | `git-commit`、`提交` |
 | [github-governance](./skills/engineering/github-governance/SKILL.md) | 审计仓库治理（治理文件、CI、分支保护、依赖更新）并按清单修复。文件类走 PR、保护走 API | `repo audit`、`仓库体检`、`governance fix`、`修复治理` |
