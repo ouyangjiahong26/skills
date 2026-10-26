@@ -45,7 +45,7 @@ git add -A && git commit -m "chore: 补齐仓库治理文件"   # 新增 skill �
 git push -u origin chore/gov-<日期>
 ```
 
-推送后走 `/open-pr`：标题按其约定用 `[AI Generated][CHORE] 补齐仓库治理文件`，body 写改动清单并注明“纯配置/文档改动，不挂 issue”。CI 预检、评审与 squash 合并用 `/merge-pr`。批量流程里 `/open-pr` 不可调用（手动 skill）时，用等价命令兜底：
+推送后走 `/open-pr`：标题按其约定用 `[AI Generated][CHORE] 补齐仓库治理文件`，批次里新增 skill 时用 `[FEAT]`。body 写改动清单并注明“纯配置/文档改动，不挂 issue”。CI 预检、评审与 squash 合并用 `/merge-pr`。批量流程里 `/open-pr` 不可调用（手动 skill）时，用等价命令兜底：
 
 ```bash
 gh pr create --title "[AI Generated][CHORE] 补齐仓库治理文件" --body "<改动清单;纯配置/文档改动,不挂 issue>"
