@@ -30,8 +30,8 @@ disable-model-invocation: true
 gh pr list --head <branch> --json url,number --jq '.[0]'
 ```
 
-3. 已有 PR 时复用其 URL 和编号，标题保持不动。正文与当前分支不一致时，按当前改动更新。否则：
-   - 从 `git log <base>..<branch> --pretty=%s` 找关联 `#N`。标题写 `[AI Generated][<类型>] <描述>`：类型取 `docs/agents/ai-contribution.md` 列出的标签（`[FIX]`、`[DOCS]`…），描述取第一条 commit message 去掉 `type(scope):` 前缀后的部分。
+3. 已有 PR 时复用其 URL 和编号，标题保持不动，正文不改写。正文与当前分支不一致时，先询问用户，只有确认 PR 由本次 AI 创建时才按当前改动更新。否则：
+   - 从 `git log <base>..<branch> --pretty=%s` 找关联 `#N`。标题写 `[AI Generated][<类型>] <描述>`：类型取 `[FIX]`、`[DOCS]`、`[FEAT]`、`[REFACTOR]`、`[TEST]`、`[CHORE]`、`[STYLE]` 中的一个，描述取第一条 commit message 去掉 `type(scope):` 前缀后的部分。
    - 起草 body：关联 issue、改动摘要、测试命令及结果。分支上有多条 commit 时改动摘要覆盖全部 commit。没有关联 issue 时明确写无关联 issue。
    - 用 `gh pr create --base <base> --head <branch> --title "<标题>" --body "<body>"` 创建。
 4. base 不是默认分支时把这一层入栈（新建 PR 和复用已有 PR 都要做）。`gh stack link` 自己会 push 分支，且要求给全链：
