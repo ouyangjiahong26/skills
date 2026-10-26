@@ -4,7 +4,7 @@
 
 ## Commit message 格式
 
-类 Conventional Commits，描述用中文：
+格式仿照 Conventional Commits，描述用中文：
 
 ```
 <type>(<scope>): <description>
@@ -42,13 +42,13 @@
   - `docs/ai-contribution`
   - `chore/repo-polish`
   - `fix/issue-40-filter-delete`
-- 一个分支对应一个关注点。同一分支上的多个 commit 各自独立成篇（见拆分原则）。
-- 已经在默认分支上提交、且尚未推送时，用 `git switch -c <branch>` 把提交带到新分支。已推送的公共历史不要改写。
+- 一个分支对应一个关注点。同一分支上的多个 commit 各自独立（见拆分原则）。
+- 已经在默认分支上提交且尚未推送时，用 `git switch -c <branch>` 把提交带到新分支。已推送的公共历史不要改写。
 - 提交后由 `/open-pr` 推送分支并开 PR，由 `/merge-pr` 合并与清理。提交环节不推送、不合并。
 
 ## 拆分原则
 
-一个 commit 只包含一个独立关注点。若改动跨越多个模块或意图，拆成多个 commit，各自拟定 message。
+一个 commit 只包含一个独立关注点。改动涉及多个模块或多种意图时，拆成多个 commit，各自拟定 message。
 
 拆分步骤：
 
