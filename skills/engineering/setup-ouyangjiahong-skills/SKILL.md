@@ -51,7 +51,7 @@ GitHub remote 默认 GitHub（`gh`），GitLab remote 默认 GitLab（`glab`）�
 
 选 GitHub 时接着问是否用 GitHub Project 管理工作状态（`/github-project`、`/triage`、`/open-pr`、`/merge-pr` 依赖它）。用时：
 
-1. `gh project list --owner <owner>` 列出候选，让用户选定。
+1. `gh project list --owner <owner>` 列出候选，让用户选定。owner 是用户账号时裸 login 会报 `unknown owner type`，改用 `--owner "@me"`。
 2. `gh project view <number> --owner <owner> --format json --jq .id` 取 Project ID。`gh project field-list <number> --owner <owner> --format json` 取 Status 等字段 ID 与选项 ID。
 3. 按模板的“GitHub Project”节填表，标为“是”。Status 缺模板列出的某个选项时，报告缺口，不自行建选项。
 
