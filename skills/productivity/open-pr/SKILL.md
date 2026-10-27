@@ -19,7 +19,6 @@ disable-model-invocation: true
 5. base 不是默认分支时（本分支是栈的一层）：
    - 下层分支必须有 open PR（`gh pr list --head <base> --json number,state --jq '.[0]'`）。没有就停止，提示用户先对下层分支跑 `/open-pr`。`gh stack link` 会给缺 PR 的下层自动建 draft PR，不借它做这件事。
    - `gh stack --version` 失败时停止，请用户跑 `gh extension install github/gh-stack`。链式 PR 不入栈时，上层 PR 的 CI 与分支规则不会按栈底分支触发。
-   - 不用 `gh stack view` 反推 base：piw 的 worktree 读不到 `.git/gh-stack`（跟踪文件在主仓库 git 目录下），它必然报 not part of a stack。
 
 ## 2. 推送并创建 PR
 
@@ -74,4 +73,3 @@ gh api /repos/<owner>/<repo>/stacks/<栈号> --jq '.base.ref, ([.pull_requests[]
 | `gh stack` 扩展未安装 | 停止，请用户 `gh extension install github/gh-stack` |
 | 下层分支没有 open PR | 停止，提示先对下层分支跑 `/open-pr` |
 | `gh stack link` 失败 | 报告错误与原因。不自行拼链，也不改用 `gh stack submit`（它自造标题并新建 draft PR） |
-| worktree 里 `gh stack view` 报 not part of a stack | 预期行为（读不到跟踪文件）。base 用参数或已有 PR 的 `baseRefName` 判定 |
