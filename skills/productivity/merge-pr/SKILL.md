@@ -30,6 +30,14 @@ gh api /repos/<owner>/<repo>/stacks/<栈号> --jq '.base.ref, ([.pull_requests[]
 
 本轮会话已有同一分支且其后无新 commit 的 `code-review` 结论，则算通过。否则以 `git merge-base <base> <branch>` 为固定点调用 `code-review` skill。栈内 PR 的 base 是下层分支，这个固定点就是下层分支的最新提交，评审范围是本层 diff。有阻塞项（标准见 `/open-pr` 的“评审”节）就按来源列出并停止等待修复。
 
+PR 上已有的评审结论也要通过。逐评审人取最新一条，任一人（含自动评审 bot）最新结论为 `CHANGES_REQUESTED` 即未通过：
+
+```bash
+gh api /repos/<owner>/<repo>/pulls/<PR号>/reviews --jq 'sort_by(.submitted_at) | group_by(.user.login) | map(last) | map(select(.state == "CHANGES_REQUESTED")) | length'
+```
+
+输出非 0 时，读出意见并交由 `/resolving-merge-conflicts` 的“PR 评审意见”节处理，解决并 push 后重跑本步。
+
 ### 可合并性
 
 `gh pr checks` 只反映检查结果，不反映分支是否落后 base 或被阻塞，先查 PR 本身：
@@ -42,7 +50,7 @@ gh pr view <PR-number> --json state,isDraft,mergeable,mergeStateStatus
 - `isDraft` 为 `true`（或 `mergeStateStatus` 为 `DRAFT`）：运行 `gh pr ready <PR-number>` 后继续。
 - `mergeable` 为 `CONFLICTING` 或 `mergeStateStatus` 为 `DIRTY`：存在冲突，交由 `/resolving-merge-conflicts`，解决并 push 后重跑本步。
 - `mergeStateStatus` 为 `BEHIND`：head 分支落后 base，按下面“非栈内 PR / 栈内 PR”的对应方式 rebase 后重跑本步。
-- `mergeStateStatus` 为 `BLOCKED`：被分支保护规则阻塞（如缺 review），报告原因，停止。
+- `mergeStateStatus` 为 `BLOCKED`：被分支保护规则阻塞。由评审未通过引起的，按上面“评审”节处理。其他原因（如缺人工 approve）报告并停止。
 
 非栈内 PR 落后时：`git fetch origin <base>` 后 `git rebase origin/<base>`（出现冲突同上交由 `/resolving-merge-conflicts`），再用 `git push --force-with-lease origin <branch>` 推送。回到本步开头重新预检：rebase 产生新 commit，评审与 CI 都要重做。
 
