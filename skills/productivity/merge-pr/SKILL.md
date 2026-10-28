@@ -102,15 +102,19 @@ gh api repos/<owner>/<repo>/pulls/<层PR号>/merge-async/<uuid> --jq .status
 - 每层确认 `gh pr view <层PR号> --json state --jq .state` 输出 `MERGED` 再处理下一层。下层落地后其余层会被服务端级联 rebase（SHA 改写、CI 重跑），所以下一层要回第 1 步重读栈、回第 2 步重跑预检。
 - 不要用 `gh stack merge`：它无法指定提交标题，多提交的层会把带标记的 PR 标题写进历史。
 
-不加 `--delete-branch`：squash 合并后本地分支须用户确认用 `-D` 才删得掉，合并与分支删除因此分开执行。远端分支在确认合并后单独删，本地分支在第 4 步删。
+不加 `--delete-branch`：squash 合并后本地分支须用户确认用 `-D` 才删得掉，合并与分支删除因此分开执行。仓库开启合并后自动删除远端分支时，该分支在合并落地那一刻已由 GitHub 删除，只剩本地分支待第 4 步处理。
 
 合并失败立即停止：报告错误，不做任何清理。删除未合并 PR 的远端 head 分支会让 GitHub 自动关闭该 PR，这是禁止操作。
 
-每层合并成功后，确认状态已变为 `MERGED`，再删该层的远端分支（分支名取自第 1 步的全栈输出。非栈内 PR 用当前分支）：
+每层合并成功后，确认状态已变为 `MERGED`，再处理该层的远端分支（分支名取自第 1 步的全栈输出。非栈内 PR 用当前分支）。仓库可能开启了合并后自动删除，此时分支已不存在，先查远端再决定是否删除：
 
 ```bash
 gh pr view <PR-number> --json state --jq .state   # 必须输出 MERGED
-git push origin --delete <branch>
+if git ls-remote --exit-code --heads origin <branch> >/dev/null 2>&1; then
+  git push origin --delete <branch>
+else
+  echo "远端分支已由 GitHub 删除"
+fi
 ```
 
 最后把 PR 项与关联 Issue 置 `Done`，关联 Issue 以 `Completed` 为原因关闭。无关联 Issue 只迁 PR 项。栈内落地多层时，每层都做同样的迁移。Project 写入按 `github-project` skill 的 references/sync-discipline.md 执行。
