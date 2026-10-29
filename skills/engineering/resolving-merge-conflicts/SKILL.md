@@ -32,7 +32,7 @@ gh api /repos/<owner>/<repo>/pulls/<PR号>/comments --jq '.[] | {user: .user.log
 
 3. 修复成立的意见，只动意见涉及的范围。评审常分阻塞与应改两级，全部处理，不只处理阻塞项。
 
-4. 对不采纳的意见逐条回帖说明依据，第一行写 AI 贡献标记（`> **[AI Generated]** 本评论由 AI 完成。`）：
+4. 对不采纳的意见逐条回帖说明依据，最后一行加 AI 贡献标记，语言跟正文一致，写明 harness 与模型（中文 `> 本评论由 <Harness> 的 <模型> 完成。`，英文 `> Written by <Harness> using <model>.`）：
 
 ```bash
 gh api --method POST /repos/<owner>/<repo>/pulls/<PR号>/comments/<commentId>/replies -f body="<标记与理由>"

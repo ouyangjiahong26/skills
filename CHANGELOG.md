@@ -26,6 +26,7 @@
 - 写作要求新增“单位用国标”一条：带单位的数值用 GB 3100～3102 的法定计量单位。
 - `docs/agents/issue-tracker.md` 的种子模板吸收 issue / PR / 评论的格式约定：提案先行、issue 三段、PR 五段与评论规范。
 - `triage`：agent brief 模板去掉 Harness 与 Model 字段，不再要求写明认领环境，维护者未指定时先问再写的条款一并删除。
+- AI 贡献标记：评论的标记移到最后一行，语言跟正文一致，并写明 harness 与模型（中文 `本评论由 <Harness> 的 <模型> 完成。`，英文 `Written by <Harness> using <model>.`），不再照搬标题的方括号标签。
 - `open-pr` 与 `merge-pr`：不再以 piw 创建的 worktree 为默认场景。`merge-pr` 只在主工作树运行，合并后直接清理本地与远端分支。`open-pr` 删去针对 worktree 的 `gh stack view` 说明。
 
 ### 移除

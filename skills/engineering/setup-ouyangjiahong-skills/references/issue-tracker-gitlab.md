@@ -5,7 +5,7 @@
 ## 约定
 
 - 创建 issue：`glab issue create --title "..." --description "..."`。多行描述用 heredoc。传 `--description -` 打开编辑器。
-- AI 贡献标记：AI 提交的 issue 与 PR 标题以 `[AI Generated][<类型>]` 开头（类型是大写标签，如 `[FIX]`、`[DOCS]`）。AI 写的评论首行用 `> **[AI Generated]** 本评论由 AI 完成。` 或 `> **[AI Assisted]** 本评论由 AI 辅助完成。`
+- AI 贡献标记：AI 提交的 issue 与 PR 标题以 `[AI Generated][<类型>]` 开头（类型是大写标签，如 `[FIX]`、`[DOCS]`）。AI 写的评论在最后一行加标记，语言跟正文一致，写明 harness 与模型：中文用 `> 本评论由 <Harness> 的 <模型> 完成。` 或 `> 本评论由 <Harness> 的 <模型> 辅助完成。`，英文用 `> Written by <Harness> using <model>.` 或 `> Drafted by <Harness> using <model>, edited by a human.`
 - 读取 issue：`glab issue view <number> --comments`。用 `-F json` 获取机器可读输出。
 - 列出 issue：`glab issue list -F json`，按需加 `--label` 过滤。
 - 评论 issue：`glab issue note <number> --message "..."`。GitLab 把评论叫作“note”。

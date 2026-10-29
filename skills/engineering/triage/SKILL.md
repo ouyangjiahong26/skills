@@ -10,13 +10,14 @@ disable-model-invocation: true
 
 如果本仓库把外部 PR 也当作请求入口（见 issue-tracker 配置），分诊同样覆盖它们。PR 就是带代码的 issue，同样的角色、同样的状态、同一台机器，下文几处标了“针对 PR”的差异。裸 `#42` 按 tracker 配置解析为 issue 或 PR。
 
-分诊期间发到 issue tracker 的每条评论或 issue，必须以下面这行 AI 贡献标记开头：
+分诊期间发到 issue tracker 的每条评论或 issue，必须在最后一行加 AI 贡献标记，语言跟正文一致，并写明 harness 与模型：
 
-```
-> **[AI Generated]** 本评论由 AI 完成。
-```
+- 中文正文：`> 本评论由 <Harness> 的 <模型> 完成。`
+- 英文正文：`> Written by <Harness> using <model>.`
 
-分诊评论写的是 agent 自己的判断，用“由 AI 完成”。整段只是转述维护者的结论时，改用 `> **[AI Assisted]** 本评论由 AI 辅助完成。`
+`<Harness>` 与 `<模型>` 填当前会话报告的实际值，不猜，取不到写 `unknown`。
+
+分诊评论写的是 agent 自己的判断，用 AI 完成这一类。整段只是转述维护者的结论时，改用 AI 辅助完成：中文写 `> 本评论由 <Harness> 的 <模型> 辅助完成。`，英文写 `> Drafted by <Harness> using <model>, edited by a human.`
 
 ## 参考文档
 
