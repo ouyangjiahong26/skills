@@ -14,7 +14,7 @@ disable-model-invocation: true
 - Windows 上先确定用户从哪个 shell 用 `pi`：PowerShell 还是 git-bash / MSYS。Windows PowerShell 5.1 与 PowerShell 7 的 `$PROFILE` 是两个文件，也要先确认版本。
 - 在交互 shell 中检查 `type piw piw-clean`（bash / zsh）或 `Get-Command piw,piw-clean`（PowerShell）是否已定义，以及目标文件里是否已有同名函数及其行号范围。
 - 确认用户实际使用的 shell 及目标文件（bash `~/.bashrc`，zsh `~/.zshrc`，PowerShell `$PROFILE`）。
-- 已有函数与模板的差异：旧版本用 `git branch -d` 删分支，squash 合并的分支会误报“未合并”而删不掉。
+- 已有函数与模板的差异：旧版本用 `git branch -d` 删分支，squash 合并的分支会误报“未合并”而删不掉。旧版 `piw` 把 worktree 建在 `../pi-<分支名>`，新版建在 `~/worktrees/<仓库名>/<分支名>`。
 - Windows 上定位 Windows Terminal 的 settings.json：Store 版 `$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json`，解包版 `$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json`，取先存在者。
 - `$PROFILE` 是否已有 cwd 跟踪段（搜 `]9;9;`），prompt 初始化（如 starship init）在哪一行。settings.json 的 actions 里是否已绑 `duplicateTab` 或 `ctrl+shift+t`。
 
@@ -22,7 +22,7 @@ disable-model-invocation: true
 
 说明两个命令的行为，向用户确认写入哪个文件：
 
-- `piw <分支名> [基础commit/分支]`：新建分支和 worktree（POSIX 为 `../pi-<分支名>`，PowerShell 为 `..\pi-<分支名>`）后直接进入 pi。
+- `piw <分支名> [基础commit/分支]`：在 `~/worktrees/<仓库名>/<分支名>`（PowerShell 为 `%USERPROFILE%\worktrees\<仓库名>\<分支名>`）新建分支和 worktree 后直接进入 pi。不给基础时先 `git fetch origin`，从 `origin/<默认分支>` 起，没有远端时退回当前 HEAD。
 - `piw-clean [分支名]`：在 worktree 内不带参数清理当前 worktree。在主仓库带分支名清理对应 worktree。删分支前先用 patch-id 比对，再对 squash 合并检查分支改动能否在 base 上反向应用（`git apply --check --reverse`），两者都未命中才保留。确有未合并改动的分支保留并说明。
 - worktree 有未提交改动时会强制删除，改动丢失。必须先向用户说明。
 

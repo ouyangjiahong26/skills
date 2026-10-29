@@ -8,12 +8,39 @@
 function piw {
   param(
     [Parameter(Mandatory = $true, Position = 0)][string]$Branch,
-    [Parameter(Position = 1)][string]$Base = 'HEAD'
+    [Parameter(Position = 1)][string]$Base
   )
   # 会话若把 $ErrorActionPreference 设为 Stop，git 写到 stderr 的警告/报错会中断函数；
   # 在本函数作用域内固定为 Continue：git 的消息照常显示，失败与否仍看 $LASTEXITCODE。
   $ErrorActionPreference = 'Continue'
-  $dir = Join-Path '..' ('pi-' + ($Branch -replace '/', '-'))   # feature/login -> ..\pi-feature-login
+  # 定位主仓库：git worktree list 第一条即主仓库，仓库名与 worktree 根目录都由它决定
+  $porcelain = @(git worktree list --porcelain 2>$null)
+  $main = $porcelain | Where-Object { $_ -like 'worktree *' } | Select-Object -First 1
+  if (-not $main) {
+    Write-Output 'piw: 当前目录不在 git 仓库内'
+    return
+  }
+  $main = $main.Substring(9)
+  $repo = Split-Path $main -Leaf
+  $root = Join-Path (Join-Path $HOME 'worktrees') $repo   # 固定根目录，不再散落在仓库父目录
+  $dir = Join-Path $root ($Branch -replace '/', '-')      # feature/login -> ~\worktrees\<仓库>\feature-login
+  if (-not $Base) {
+    # 默认从远端默认分支起，先 fetch 避免起在过期的 origin 引用上
+    git -C $main remote get-url origin 2>$null | Out-Null
+    if ($LASTEXITCODE -eq 0) {
+      git -C $main fetch -q origin 2>$null
+      if ($LASTEXITCODE -ne 0) { Write-Output 'piw: fetch origin 失败，使用本地已有的 origin 引用' }
+      $default = git -C $main symbolic-ref --short refs/remotes/origin/HEAD 2>$null
+      if (-not $default) {
+        foreach ($candidate in 'main', 'master') {
+          git -C $main show-ref --verify --quiet "refs/remotes/origin/$candidate"
+          if ($LASTEXITCODE -eq 0) { $default = "origin/$candidate"; break }
+        }
+      }
+    }
+    if ($default) { $Base = $default } else { $Base = 'HEAD' }   # 无远端时退回当前 HEAD
+  }
+  New-Item -ItemType Directory -Force -Path $root | Out-Null
   git worktree add -b $Branch $dir $Base
   if ($LASTEXITCODE -ne 0) { return }
   Set-Location $dir
@@ -126,7 +153,7 @@ function piw-clean {
 
 ## 使用
 
-- `piw feature/login`：在 `..\pi-feature-login` 新建 worktree 并直接进入 pi。
+- `piw feature/login`：在 `%USERPROFILE%\worktrees\<仓库名>\feature-login` 新建 worktree 并直接进入 pi。不给基础时先 fetch，从 `origin/<默认分支>` 起。
 - `piw-clean`（在 worktree 内）：移除当前 worktree、prune、删当前分支，回到主仓库。
 - `piw-clean issue100`（任意位置，包括主仓库）：清理 issue100 对应的 worktree 与分支。
 
@@ -146,7 +173,7 @@ if (-not ($b.Length -ge 3 -and $b[0] -eq 0xEF -and $b[1] -eq 0xBB -and $b[2] -eq
 
 ## 注意
 
-- 目录约定与 POSIX 版一致：worktree 放在主仓库父目录下的 `pi-<分支名>`，分支名里的 `/` 转成 `-`。
+- 目录约定与 POSIX 版一致：worktree 放在 `%USERPROFILE%\worktrees\<主仓库目录名>\<分支名>`，分支名里的 `/` 转成 `-`。根目录固定，不随各仓库的父目录散落。
 - `piw-clean` 必须能定位主仓库（`git worktree list` 第一条）。不在仓库内时打印提示并返回。
 - 两个函数都在自己作用域内把 `$ErrorActionPreference` 固定为 `Continue`：会话设成 `Stop` 时，原生命令往 stderr 写的任何内容（含警告）都会中断函数，失败与否统一看 `$LASTEXITCODE`。赋值只作用于函数作用域，不改会话设置。
 - diff 用临时文件传给 `git apply`（`git diff --output=`）：PowerShell 管道会按会话编码重新编码 git 的输出，中文文件名的补丁会被破坏。`git apply` 加 `--quiet`，避免预期失败时把 git 的报错混进输出。

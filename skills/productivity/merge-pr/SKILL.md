@@ -5,7 +5,7 @@ argument-hint: “[PR 编号或分支名]（可选，默认当前分支）”
 disable-model-invocation: true
 ---
 
-合并当前分支对应的 PR，随后清理本地与远端分支。按顺序执行。遇到阻塞问题或 CI 失败时停下。合并前同样停下。PR 在 GitHub 栈里时走异步合并接口，自底向上逐层合并。
+合并当前分支对应的 PR，随后清理本地与远端分支。按顺序执行。遇到阻塞问题或 CI 失败时停下。合并前同样停下。PR 在 GitHub 栈里时走异步合并接口，自底向上逐层合并。当前目录是链接工作树时，本地分支与 worktree 留给 `piw-clean` 清理。
 
 ## 1. 确认 PR
 
@@ -19,7 +19,7 @@ gh api /repos/<owner>/<repo>/stacks/<栈号> --jq '.base.ref, ([.pull_requests[]
 ```
 
 `<owner>/<repo>` 由 `gh repo view --json nameWithOwner --jq .nameWithOwner` 取。第一行空即普通 PR，走下面各步中标注“普通 PR”的路径。非空时第二行给出栈底分支与每层的 PR 号、分支名、状态和是否 draft。栈内时，本次要落地的层是从最低未合并层到目标 PR（含）的各层。
-4. 当前目录属于 `git worktree list` 列出的某个 worktree 而非主工作树时，停止并说明本 skill 须在主工作树运行，请用户回主工作树重跑。
+4. 记录主工作树：`git worktree list --porcelain` 的第一条。当前目录是主工作树还是链接工作树，决定第 4 步的清理方式，不阻止合并。
 5. 分支有未推送提交（`git rev-list origin/<branch>..<branch>` 非空）时先 `git push origin <branch>`。
 
 ## 2. 合并前预检
@@ -110,7 +110,7 @@ gh api repos/<owner>/<repo>/pulls/<层PR号>/merge-async/<uuid> --jq .status
 - 每层确认 `gh pr view <层PR号> --json state --jq .state` 输出 `MERGED` 再处理下一层。下层落地后其余层会被服务端级联 rebase（SHA 改写、CI 重跑），所以下一层要回第 1 步重读栈、回第 2 步重跑预检。
 - 不要用 `gh stack merge`：它无法指定提交标题，多提交的层会把带标记的 PR 标题写进历史。
 
-不加 `--delete-branch`：squash 合并后本地分支须用户确认用 `-D` 才删得掉，合并与分支删除因此分开执行。远端分支在确认合并后单独删，本地分支在第 4 步删。
+不加 `--delete-branch`：squash 合并后本地分支须用户确认用 `-D` 才删得掉，合并与分支删除因此分开执行。远端分支在确认合并后单独删，本地分支在第 4 步删；在链接工作树里合并时，本地分支与 worktree 留给 `piw-clean`。
 
 合并失败立即停止：报告错误，不做任何清理。删除未合并 PR 的远端 head 分支会让 GitHub 自动关闭该 PR，这是禁止操作。
 
@@ -127,14 +127,15 @@ git push origin --delete <branch>
 
 仅在第 3 步确认 `state` 为 `MERGED` 后执行。
 
-1. 检查 `git status --porcelain`：有未提交或未跟踪改动就停止，列出改动并询问用户如何处理。干净则继续。
-2. 依次执行 `git checkout <base>`、`git pull origin <base>`。
-3. 删本地分支：squash 合并后本地提交不在 base 历史中，`git branch -d` 会误报 "not fully merged"，向用户确认后执行 `git branch -D <branch>`。
-4. 栈内落地多层时本地只处理当前分支。上层分支已被服务端级联 rebase，本地分支随之过期，报告里提示对各上层分支执行 `git pull --rebase`，或在本仓库跑 `gh stack sync --prune`。
+1. 检查当前目录 `git status --porcelain`：有未提交或未跟踪改动就停止，列出改动并询问用户如何处理。干净则继续。
+2. 当前目录是主工作树时，依次执行 `git checkout <base>`、`git pull origin <base>`，再按第 4 条删本地分支。
+3. 当前目录是链接工作树时，被检出的分支不能在这里删除，也不在这里切换 base。改在主工作树同步 base：`git -C <主工作树> status --porcelain` 干净时执行 `git -C <主工作树> checkout <base>` 与 `git -C <主工作树> pull origin <base>`，有改动时跳过并报告。本地分支与 worktree 留给 `piw-clean` 清理，未安装时在工作树内 `git switch --detach` 后删分支，再 `git worktree remove`。
+4. 在主工作树删本地分支：squash 合并后本地提交不在 base 历史中，`git branch -d` 会误报 "not fully merged"，向用户确认后执行 `git branch -D <branch>`。
+5. 栈内落地多层时本地只处理当前分支。上层分支已被服务端级联 rebase，本地分支随之过期，报告里提示对各上层分支执行 `git pull --rebase`，或在本仓库跑 `gh stack sync --prune`。
 
 ## 5. 报告
 
-报告以下可验证结果：PR URL、评审结论、CI 状态、合并方式、PR 与关联 Issue 的 Project 状态、远端分支是否已删除、base 分支是否已同步、本地分支是否已删除。栈内另报栈号、本次落地的层与每层的提交标题，并提示上层分支已被服务端 rebase，需要各自 `git pull --rebase`。
+报告以下可验证结果：PR URL、评审结论、CI 状态、合并方式、PR 与关联 Issue 的 Project 状态、远端分支是否已删除、base 分支是否已同步、本地分支是否已删除（链接工作树里合并时说明留给 `piw-clean`）。栈内另报栈号、本次落地的层与每层的提交标题，并提示上层分支已被服务端 rebase，需要各自 `git pull --rebase`。
 
 ## 边界
 
@@ -142,7 +143,7 @@ git push origin --delete <branch>
 |------|----------|
 | 找不到 PR，或 `state` 不是 `OPEN` | 停止并报告，不做任何写操作 |
 | 合并命令失败 | 立即停止，不做清理，不删远端分支 |
-| 当前目录属于某个 worktree | 停止，请在主工作树重跑本 skill |
+| 当前目录是链接工作树 | 允许合并。清理只在主工作树同步 base，本地分支与 worktree 交由 `piw-clean` |
 | 清理时本地有未提交改动 | 停止，列出改动并询问用户 |
 | 栈内某层不是 `open` 或仍是 draft | 停止并列出该层，不做写操作 |
 | 异步合并返回 `failed` | 立即停止，报告 `details.message`。原子合并，没有任何层落地 |
