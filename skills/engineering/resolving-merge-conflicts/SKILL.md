@@ -17,27 +17,36 @@ description: 当需要解决进行中的 git merge / rebase 冲突，或处理 P
 
 ## PR 评审意见
 
-处理 PR 上未解决的评审：自动评审 bot 或人留下的 `CHANGES_REQUESTED` 与逐行 comment。
+处理 PR 上未解决的评审：自动评审 bot 或人留下的 `CHANGES_REQUESTED`、逐行 comment 与未解决的评审会话。
 
-1. 读全部评审结论与逐行 comment，用 REST 端点：
+1. 读全部评审结论、逐行 comment 与评审会话：
 
 ```bash
 gh api /repos/<owner>/<repo>/pulls/<PR号>/reviews --jq '.[] | {user: .user.login, state: .state, body: .body}'
-gh api /repos/<owner>/<repo>/pulls/<PR号>/comments --jq '.[] | {user: .user.login, path: .path, line: .line, body: .body}'
+gh api /repos/<owner>/<repo>/pulls/<PR号>/comments --jq '.[] | {id, user: .user.login, path: .path, line: .line, body: .body}'
+gh api graphql -f query='query { repository(owner:"<owner>", name:"<repo>") { pullRequest(number:<PR号>) { reviewThreads(first:100) { nodes { id isResolved isOutdated path line comments(first:20){ nodes { id author{login} body } } } } } } }'
 ```
 
-`<owner>/<repo>` 由 `gh repo view --json nameWithOwner --jq .nameWithOwner` 取。评审正文是汇总，逐行 comment 是细节，两处都要看。
+`<owner>/<repo>` 由 `gh repo view --json nameWithOwner --jq .nameWithOwner` 取。评审正文是汇总，逐行 comment 是细节，会话 ID 用于回复与解决，三处都要看。
 
 2. 逐条判断是否成立。评审意见（含 bot 的）不必然正确：按意见指出的文件与行号核对，必要时读它引用的材料求证。成立的修复。不成立的不改，记下依据。
 
 3. 修复成立的意见，只动意见涉及的范围。评审常分阻塞与应改两级，全部处理，不只处理阻塞项。
 
-4. 对不采纳的意见逐条回帖说明依据，最后一行加 AI 贡献标记，语言跟正文一致，写明 harness 与模型（中文 `> 本评论由 <Harness> 的 <模型> 完成。`，英文 `> Written by <Harness> using <model>.`）：
+4. push 分支，让回复里的提交 SHA 指向已推送的修订。
+
+5. 每条评审会话都回复：采纳的写修复结果与提交 SHA，不采纳的写依据。回复用：
 
 ```bash
-gh api --method POST /repos/<owner>/<repo>/pulls/<PR号>/comments/<commentId>/replies -f body="<标记与理由>"
+gh api --method POST /repos/<owner>/<repo>/pulls/<PR号>/comments/<commentId>/replies -f body="<回复正文>"
 ```
 
-采纳并修复的不必回帖，diff 即回应。
+AI 贡献标记按目标仓库的约定，位置与格式照该仓库的 `docs/agents/ai-contribution.md` 或 `docs/agents/issue-tracker.md`，语言跟正文一致。
 
-5. push 分支。自动评审 bot 会重新评审，复审仍提意见时重复本节流程。复审通过或用户确认解决后，合并走 `/merge-pr`。
+6. 回复后用 `resolveReviewThread` 解决会话，逐条确认 `isResolved` 为 true。push 会让旧会话变为 outdated，outdated 不等于已解决。
+
+```bash
+gh api graphql -f threadId=<threadId> -f query='mutation($threadId:ID!){resolveReviewThread(input:{threadId:$threadId}){thread{id isResolved}}}'
+```
+
+7. 自动评审 bot 会重新评审，复审仍提意见时重复本节流程。复审产生的新会话同样回复并 resolve。复审通过或用户确认解决后，合并走 `/merge-pr`。
