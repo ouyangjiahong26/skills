@@ -4,12 +4,14 @@
 
 ## 规则
 
-| 产物 | 位置 | AI 完成 | AI 辅助完成 |
-|---|---|---|---|
-| Issue 标题 | 最开头 | `[AI Generated][<类型>]` | `[AI Assisted][<类型>]` |
-| PR 标题 | 最开头 | `[AI Generated][<类型>]` | `[AI Assisted][<类型>]` |
-| 中文评论 | 最后一行 | `> 本评论由 <Harness> 的 <模型> 完成。` | `> 本评论由 <Harness> 的 <模型> 辅助完成。` |
-| 英文评论 | 最后一行 | `> Written by <Harness> using <model>.` | `> Drafted by <Harness> using <model>, edited by a human.` |
+| 产物 | 位置 | 标记 |
+|---|---|---|
+| Issue 标题 | 最开头 | `[AI Generated][<类型>]` |
+| PR 标题 | 最开头 | `[AI Generated][<类型>]` |
+| 中文评论 | 最后一行 | `> 本评论由 <Harness> 的 <模型> 完成。` |
+| 中文评论 | 最后一行 | `> 本评论由 <Harness> 的 <模型> 辅助完成。` |
+| 英文评论 | 最后一行 | `> Written by <Harness> using <model>.` |
+| 英文评论 | 最后一行 | `> Drafted by <Harness> using <model>, edited by a human.` |
 
 标题写成 `[AI Generated][<类型>] <标题>`：标记在最前，紧跟方括号类型标签，再空一格写标题，如 `[AI Generated][FIX] 修正 piw-clean 的合并判断`。类型标签按改动性质取大写，取值同 [git-commit 的类型表](../../skills/engineering/git-commit/references/git-workflow.md)（`[FIX]`、`[DOCS]`、`[FEAT]`、`[REFACTOR]`、`[TEST]`、`[CHORE]`、`[STYLE]`）。标题已带标记的不再叠加。
 

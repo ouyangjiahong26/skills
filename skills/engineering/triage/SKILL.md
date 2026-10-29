@@ -17,7 +17,7 @@ disable-model-invocation: true
 
 `<Harness>` 与 `<模型>` 填当前会话报告的实际值，不猜，取不到写 `unknown`。
 
-分诊评论写的是 agent 自己的判断，用 AI 完成这一档。整段只是转述维护者的结论时，改用 AI 辅助完成：中文写 `> 本评论由 <Harness> 的 <模型> 辅助完成。`，英文写 `> Drafted by <Harness> using <model>, edited by a human.`
+分诊评论写的是 agent 自己的判断，用 AI 完成这一类。整段只是转述维护者的结论时，改用 AI 辅助完成：中文写 `> 本评论由 <Harness> 的 <模型> 辅助完成。`，英文写 `> Drafted by <Harness> using <model>, edited by a human.`
 
 ## 参考文档
 
