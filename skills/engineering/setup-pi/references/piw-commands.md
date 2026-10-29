@@ -6,12 +6,38 @@
 # piw: 新建分支+worktree 并直接进入 pi
 # 用法: piw <分支名> [基础commit/分支]  示例: piw feature/login main
 piw() {
-  local branch="$1" base="${2:-HEAD}" dir
+  local branch="$1" base="${2:-}" main repo root dir default
   if [ -z "$branch" ]; then
     echo "用法: piw <分支名> [基础commit/分支]"
     return 1
   fi
-  dir="../pi-${branch//\//-}"          # 分支名转目录名，如 feature/login -> ../pi-feature-login
+  # 定位主仓库：git worktree list 第一条即主仓库，仓库名与 worktree 根目录都由它决定
+  main="$(git worktree list --porcelain 2>/dev/null | awk '$1=="worktree"{print substr($0,10); exit}')"
+  if [ -z "$main" ]; then
+    echo "piw: 当前目录不在 git 仓库内"
+    return 1
+  fi
+  repo="$(basename "$main")"
+  root="$HOME/worktrees/$repo"         # 固定根目录，worktree 不再散落在各仓库的父目录
+  dir="$root/${branch//\//-}"          # 分支名转目录名，如 feature/login -> ~/worktrees/<仓库>/feature-login
+  if [ -z "$base" ]; then
+    # 默认从远端默认分支起，先 fetch 避免起在过期的 origin 引用上
+    if git -C "$main" remote get-url origin >/dev/null 2>&1; then
+      git -C "$main" fetch -q origin 2>/dev/null \
+        || echo "piw: fetch origin 失败，使用本地已有的 origin 引用" >&2
+      default="$(git -C "$main" symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null)"
+      if [ -z "$default" ]; then
+        for candidate in main master; do
+          if git -C "$main" show-ref --verify --quiet "refs/remotes/origin/$candidate"; then
+            default="origin/$candidate"
+            break
+          fi
+        done
+      fi
+    fi
+    base="${default:-HEAD}"            # 取不到远端默认分支时退回当前 HEAD
+  fi
+  mkdir -p "$root" || return 1
   git worktree add -b "$branch" "$dir" "$base" || return 1
   cd "$dir" && pi
 }
@@ -79,13 +105,13 @@ piw-clean() {
 
 ## 使用
 
-- `piw feature/login`：在 `../pi-feature-login` 新建 worktree 并直接进入 pi。
+- `piw feature/login`：在 `~/worktrees/<仓库名>/feature-login` 新建 worktree 并直接进入 pi。不给基础时先 fetch，从 `origin/<默认分支>` 起。
 - `piw-clean`（在 worktree 内）：移除当前 worktree、prune、删当前分支，回到主仓库。
 - `piw-clean issue100`（任意位置，包括主仓库）：清理 issue100 对应的 worktree 与分支。
 
 ## 注意
 
-- 目录约定：worktree 放在主仓库父目录下的 `pi-<分支名>`（`/` 转 `-`）。
+- 目录约定：worktree 放在 `~/worktrees/<主仓库目录名>/<分支名>`（`/` 转 `-`）。根目录固定，不随各仓库的父目录散落。
 - `piw-clean` 必须能定位主仓库（`git worktree list` 第一条）。不在仓库内时报错并返回 1。
 - 删分支的判据不是 `git branch -d` 的祖先关系（squash / rebase 合并重写 SHA，内容已进 base 也会被判“未合并”，留下分支），而是两步：
   1. `git cherry <主仓库当前分支> <分支>` 逐个 patch-id 比对，出现 `+` 行说明该提交的补丁在 base 中找不到。
