@@ -25,6 +25,7 @@ function piw {
   $root = Join-Path (Join-Path $HOME 'worktrees') $repo   # 固定根目录，不再散落在仓库父目录
   $dir = Join-Path $root ($Branch -replace '/', '-')      # feature/login -> ~\worktrees\<仓库>\feature-login
   if (-not $Base) {
+    $default = $null
     # 默认从远端默认分支起，先 fetch 避免起在过期的 origin 引用上
     git -C $main remote get-url origin 2>$null | Out-Null
     if ($LASTEXITCODE -eq 0) {
@@ -38,7 +39,7 @@ function piw {
         }
       }
     }
-    if ($default) { $Base = $default } else { $Base = 'HEAD' }   # 无远端时退回当前 HEAD
+    if ($default) { $Base = $default } else { $Base = 'HEAD' }   # 取不到远端默认分支时退回当前 HEAD
   }
   New-Item -ItemType Directory -Force -Path $root | Out-Null
   git worktree add -b $Branch $dir $Base

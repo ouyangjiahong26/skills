@@ -35,7 +35,7 @@ piw() {
         done
       fi
     fi
-    base="${default:-HEAD}"            # 无远端时退回当前 HEAD
+    base="${default:-HEAD}"            # 取不到远端默认分支时退回当前 HEAD
   fi
   mkdir -p "$root" || return 1
   git worktree add -b "$branch" "$dir" "$base" || return 1

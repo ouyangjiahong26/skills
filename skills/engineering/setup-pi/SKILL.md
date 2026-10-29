@@ -22,7 +22,7 @@ disable-model-invocation: true
 
 说明两个命令的行为，向用户确认写入哪个文件：
 
-- `piw <分支名> [基础commit/分支]`：在 `~/worktrees/<仓库名>/<分支名>`（PowerShell 为 `%USERPROFILE%\worktrees\<仓库名>\<分支名>`）新建分支和 worktree 后直接进入 pi。不给基础时先 `git fetch origin`，从 `origin/<默认分支>` 起，没有远端时退回当前 HEAD。
+- `piw <分支名> [基础commit/分支]`：在 `~/worktrees/<仓库名>/<分支名>`（PowerShell 为 `%USERPROFILE%\worktrees\<仓库名>\<分支名>`）新建分支和 worktree 后直接进入 pi。不给基础时先 `git fetch origin`，从 `origin/<默认分支>` 起，没有远端或取不到默认分支时退回当前 HEAD。
 - `piw-clean [分支名]`：在 worktree 内不带参数清理当前 worktree。在主仓库带分支名清理对应 worktree。删分支前先用 patch-id 比对，再对 squash 合并检查分支改动能否在 base 上反向应用（`git apply --check --reverse`），两者都未命中才保留。确有未合并改动的分支保留并说明。
 - worktree 有未提交改动时会强制删除，改动丢失。必须先向用户说明。
 
