@@ -33,7 +33,7 @@ CLI 读取 `.claude-plugin/marketplace.json`，安装时提示选择分组（Eng
 
 ## GitHub 管理
 
-AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头。AI 写的评论，首行标明由 AI 完成还是 AI 辅助完成。维护者扫一眼就知道该按什么信任级别去读，也清楚责任落在谁身上。约定见 [`docs/agents/ai-contribution.md`](./docs/agents/ai-contribution.md)。
+AI 提交的 issue 和 PR，标题以 `[AI Generated][<类型>]` 开头。AI 写的评论，最后一行加标记，写明 harness 与模型，语言跟正文一致。维护者扫一眼就知道该按什么信任级别去读，也清楚责任落在谁身上。约定见 [`docs/agents/ai-contribution.md`](./docs/agents/ai-contribution.md)。
 
 ## Skill 列表
 

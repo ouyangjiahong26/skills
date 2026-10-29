@@ -29,7 +29,7 @@ disable-model-invocation: true
 gh pr list --head <branch> --json url,number --jq '.[0]'
 ```
 
-3. 已有 PR 时复用其 URL 和编号，标题保持不动，正文默认不改写。需要更新正文时，先用 `gh pr view <number> --json author --jq .author.login` 与 `gh api user --jq .login` 比对作者。作者是本人时，询问用户并得到明确同意后，用 `gh pr edit <number> --body-file <文件>` 更新。作者不是本人时，不改正文，只用评论提出更新建议，评论首行写 AI 贡献标记（`> **[AI Generated]** 本评论由 AI 完成。`）。没有已有 PR 时：
+3. 已有 PR 时复用其 URL 和编号，标题保持不动，正文默认不改写。需要更新正文时，先用 `gh pr view <number> --json author --jq .author.login` 与 `gh api user --jq .login` 比对作者。作者是本人时，询问用户并得到明确同意后，用 `gh pr edit <number> --body-file <文件>` 更新。作者不是本人时，不改正文，只用评论提出更新建议，评论最后一行加 AI 贡献标记，语言跟正文一致，写明 harness 与模型（中文 `> 本评论由 <Harness> 的 <模型> 完成。`，英文 `> Written by <Harness> using <model>.`）。没有已有 PR 时：
    - 从 `git log <base>..<branch> --pretty=%s` 找关联 `#N`。标题写 `[AI Generated][<类型>] <描述>`：类型取 `[FIX]`、`[DOCS]`、`[FEAT]`、`[REFACTOR]`、`[TEST]`、`[CHORE]`、`[STYLE]` 中的一个，描述取第一条 commit message 去掉 `type(scope):` 前缀后的部分。
    - 起草 body：关联 issue、改动摘要、测试命令及结果。分支上有多条 commit 时改动摘要覆盖全部 commit。没有关联 issue 时明确写无关联 issue。
    - 用 `gh pr create --base <base> --head <branch> --title "<标题>" --body "<body>"` 创建。

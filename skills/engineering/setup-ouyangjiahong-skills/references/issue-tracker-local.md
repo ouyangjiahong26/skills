@@ -9,7 +9,7 @@
 - 实现 issue 每个工单一个文件，放在 `.scratch/<feature-slug>/issues/<NN>-<slug>.md`，从 `01` 开始编号，不使用单个合并的工单文件
 - 分诊状态记录在每个 issue 文件顶部附近的 `Status:` 行（角色字符串见 `triage-labels.md`）
 - 评论和对话记录追加到文件底部 `## Comments` 标题下
-- AI 贡献标记：AI 提交的 issue 与 PR 标题以 `[AI Generated][<类型>]` 开头（类型是大写标签，如 `[FIX]`、`[DOCS]`）。AI 写的评论首行用 `> **[AI Generated]** 本评论由 AI 完成。` 或 `> **[AI Assisted]** 本评论由 AI 辅助完成。`
+- AI 贡献标记：AI 提交的 issue 与 PR 标题以 `[AI Generated][<类型>]` 开头（类型是大写标签，如 `[FIX]`、`[DOCS]`）。AI 写的评论在最后一行加标记，语言跟正文一致，写明 harness 与模型：中文用 `> 本评论由 <Harness> 的 <模型> 完成。` 或 `> 本评论由 <Harness> 的 <模型> 辅助完成。`，英文用 `> Written by <Harness> using <model>.` 或 `> Drafted by <Harness> using <model>, edited by a human.`
 
 ## 当技能说“发布到 issue tracker”时
 

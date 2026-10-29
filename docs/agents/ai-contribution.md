@@ -4,18 +4,18 @@
 
 ## 规则
 
-| 产物 | 位置 | 标记 |
-|---|---|---|
-| Issue 标题 | 最开头 | `[AI Generated][<类型>]` |
-| PR 标题 | 最开头 | `[AI Generated][<类型>]` |
-| 评论 | 第一行 | `> **[AI Generated]** 本评论由 AI 完成。` |
-| 评论 | 第一行 | `> **[AI Assisted]** 本评论由 AI 辅助完成。` |
-
-AI 独立写成用 `[AI Generated]`，AI 起草且人类做了实质修改用 `[AI Assisted]`。
+| 产物 | 位置 | AI 完成 | AI 辅助完成 |
+|---|---|---|---|
+| Issue 标题 | 最开头 | `[AI Generated][<类型>]` | `[AI Assisted][<类型>]` |
+| PR 标题 | 最开头 | `[AI Generated][<类型>]` | `[AI Assisted][<类型>]` |
+| 中文评论 | 最后一行 | `> 本评论由 <Harness> 的 <模型> 完成。` | `> 本评论由 <Harness> 的 <模型> 辅助完成。` |
+| 英文评论 | 最后一行 | `> Written by <Harness> using <model>.` | `> Drafted by <Harness> using <model>, edited by a human.` |
 
 标题写成 `[AI Generated][<类型>] <标题>`：标记在最前，紧跟方括号类型标签，再空一格写标题，如 `[AI Generated][FIX] 修正 piw-clean 的合并判断`。类型标签按改动性质取大写，取值同 [git-commit 的类型表](../../skills/engineering/git-commit/references/git-workflow.md)（`[FIX]`、`[DOCS]`、`[FEAT]`、`[REFACTOR]`、`[TEST]`、`[CHORE]`、`[STYLE]`）。标题已带标记的不再叠加。
 
-标记只加在 issue 与 PR 标题上。commit message 不带标记，按 `git-commit` 的类型表写。
+标记只用于 issue 与 PR 的标题和评论。commit message 不带标记，按 `git-commit` 的类型表写。
+
+评论的标记放在最后一行，语言跟正文一致：中文评论用中文句子，英文评论用英文句子。标记不用标题那种方括号标签。`<Harness>` 与 `<模型>` 填当前会话报告的实际值，不猜，取不到写 `unknown`。
 
 两类评论的区别，在于人类是否动过内容本身：
 

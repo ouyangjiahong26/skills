@@ -38,11 +38,9 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 
 ## 模板
 
-下面是 brief 的正文结构，前面加上 AI 贡献标记再发布：
+下面是 brief 的正文结构，末尾加上 AI 贡献标记再发布，`<Harness>` 与 `<模型>` 换成实际值：
 
 ```markdown
-> **[AI Generated]** 本评论由 AI 完成。
-
 ## Agent Brief
 
 **Category:** bug / enhancement
@@ -67,6 +65,8 @@ agent 需要知道什么时候算完。每份 agent brief 必须有具体、可�
 **Out of scope:**
 - 本 issue 不应改动或处理的东西
 - 看起来相关、实则独立的相邻功能
+
+> 本评论由 <Harness> 的 <模型> 完成。
 ```
 
 ## 示例
