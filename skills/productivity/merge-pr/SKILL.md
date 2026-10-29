@@ -36,7 +36,15 @@ PR 上已有的评审结论也要通过。逐评审人取最新一条，任一�
 gh api /repos/<owner>/<repo>/pulls/<PR号>/reviews --jq 'sort_by(.submitted_at) | group_by(.user.login) | map(last) | map(select(.state == "CHANGES_REQUESTED")) | length'
 ```
 
-输出非 0 时，读出意见并交由 `/resolving-merge-conflicts` 的“PR 评审意见”节处理，解决并 push 后重跑本步。
+输出非 0 时，读出意见并交由 `/resolving-merge-conflicts` 的“PR 评审意见”节处理。修复 push 后，每条评审会话都要回复处理结果并 resolve，回到本节开头重跑。
+
+评审正文之外还要看逐行评论。用 GraphQL 列出评审会话与未解决项：
+
+```bash
+gh api graphql -f query='query { repository(owner:"<owner>", name:"<repo>") { pullRequest(number:<PR号>) { reviewThreads(first:100) { nodes { id isResolved isOutdated path line comments(first:20){ nodes { id author{login} body } } } } } } }'
+```
+
+存在未解决会话时同样交由 `/resolving-merge-conflicts` 处理，回复并 resolve 后再重跑本节。push 后旧会话会变为 outdated，outdated 不等于已解决，仍需回复并 resolve。回复与解决的具体写法见该 skill 的“PR 评审意见”节。
 
 ### 可合并性
 
@@ -50,7 +58,7 @@ gh pr view <PR-number> --json state,isDraft,mergeable,mergeStateStatus
 - `isDraft` 为 `true`（或 `mergeStateStatus` 为 `DRAFT`）：运行 `gh pr ready <PR-number>` 后继续。
 - `mergeable` 为 `CONFLICTING` 或 `mergeStateStatus` 为 `DIRTY`：存在冲突，交由 `/resolving-merge-conflicts`，解决并 push 后重跑本步。
 - `mergeStateStatus` 为 `BEHIND`：head 分支落后 base，按下面“非栈内 PR / 栈内 PR”的对应方式 rebase 后重跑本步。
-- `mergeStateStatus` 为 `BLOCKED`：被分支保护规则阻塞。由评审未通过引起的，按上面“评审”节处理。其他原因（如缺人工 approve）报告并停止。
+- `mergeStateStatus` 为 `BLOCKED`：被分支保护规则阻塞。由评审未通过或未解决评审会话引起的，按上面“评审”节处理。其他原因（如缺人工 approve）报告并停止。
 
 非栈内 PR 落后时：`git fetch origin <base>` 后 `git rebase origin/<base>`（出现冲突同上交由 `/resolving-merge-conflicts`），再用 `git push --force-with-lease origin <branch>` 推送。回到本步开头重新预检：rebase 产生新 commit，评审与 CI 都要重做。
 
@@ -135,13 +143,14 @@ git push origin --delete <branch>
 
 ## 5. 报告
 
-报告以下可验证结果：PR URL、评审结论、CI 状态、合并方式、PR 与关联 Issue 的 Project 状态、远端分支是否已删除、base 分支是否已同步、本地分支是否已删除（链接工作树里合并时说明留给 `piw-clean`）。栈内另报栈号、本次落地的层与每层的提交标题，并提示上层分支已被服务端 rebase，需要各自 `git pull --rebase`。
+报告以下可验证结果：PR URL、评审结论与评审会话的回复和解决状态、CI 状态、合并方式、PR 与关联 Issue 的 Project 状态、远端分支是否已删除、base 分支是否已同步、本地分支是否已删除（链接工作树里合并时说明留给 `piw-clean`）。栈内另报栈号、本次落地的层与每层的提交标题，并提示上层分支已被服务端 rebase，需要各自 `git pull --rebase`。
 
 ## 边界
 
 | 情况 | 处理方式 |
 |------|----------|
 | 找不到 PR，或 `state` 不是 `OPEN` | 停止并报告，不做任何写操作 |
+| 评审结论为 `CHANGES_REQUESTED` 或有未解决评审会话 | 停止并交由 `/resolving-merge-conflicts` 处理，回复并 resolve 后重跑 |
 | 合并命令失败 | 立即停止，不做清理，不删远端分支 |
 | 当前目录是链接工作树 | 允许合并。清理只在主工作树同步 base，本地分支与 worktree 交由 `piw-clean` |
 | 清理时本地有未提交改动 | 停止，列出改动并询问用户 |

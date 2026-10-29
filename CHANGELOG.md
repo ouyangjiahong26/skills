@@ -30,6 +30,7 @@
 - `open-pr` 与 `merge-pr`：不再以 piw 创建的 worktree 为默认场景。`open-pr` 删去针对 worktree 的 `gh stack view` 说明。
 - `merge-pr`：允许在链接工作树里合并。清理只把 base 同步到主工作树，本地分支与 worktree 交给 `piw-clean`。
 - `setup-pi`：`piw` 的 worktree 改建在 `~/worktrees/<仓库名>/<分支名>`，默认从 `origin/<默认分支>` 起并先 fetch。
+- `merge-pr` 与 `resolving-merge-conflicts`：评审会话纳入合并前预检，逐条回复处理结果并用 `resolveReviewThread` 解决，未回复或未解决的会话不合并。
 
 ### 移除
 
