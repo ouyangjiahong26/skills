@@ -35,7 +35,7 @@
 
 - 试验性技能与流程：research 组、Loop 套件、subagent 方案、`setup-claude-code` 等。技能集收敛为 engineering / productivity 两组。
 - 写作标准的“交流语言”一节，以及 `sync-writing-standards` skill（注入流程并入 `setup-ouyangjiahong-skills`）。
-- `implement`、`implement-spec`、`tdd`、`codebase-design`、`to-spec`：非日常调用的上游实现类技能，连同引用它们的 README 日常流程与 AI 标记清单一并清理。
+- `implement-spec`、`to-spec`：非日常调用的上游实现类技能，连同引用它们的 README 日常流程与 AI 标记清单一并清理。
 - `github-repo-audit` 与 `github-gov-fix` 合并为 `github-governance`，不再单列。
 - `performance-optimization`：删除该技能，性能回归诊断仍由 `diagnosing-bugs` 覆盖。
 
